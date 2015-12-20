@@ -1,20 +1,23 @@
 
  // ---- Knockout MVVM pattern-----
+
 var map;
-  
+var map;
+
 function initMap() {
+
 	map = new google.maps.Map(document.getElementById('map'), {
 		zoom: 8,
 		center: {lat: -34.397, lng: 150.644}
 	});
-	//call function MapViewModel() here
-	ko.applyBindings(new MapViewModel());
-}
+
+};
 
 // ViewModel
 function MapViewModel(){
-	
+    
 	var self = this;
+
 	//ViewModel gets the data from the submit button and stores it in the observable variable address
 	self.address = ko.observable("sydney, NSW");
 	// Now that we have the address, we can use geocoder to get the location and display marker
@@ -31,8 +34,13 @@ function MapViewModel(){
 			alert('Geocode was not successful for the following reason: ' + status);
 			};
 	});
-		
-	}
+	};
+
 };
+
+function startApp(){
+	initMap(); //call the initMap function here
+	ko.applyBindings(new MapViewModel()); //bind the viewmodel with Knockout
+}
 
 
