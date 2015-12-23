@@ -2,12 +2,12 @@
  // ---- Knockout MVVM pattern-----
 
 var map;
-var map;
+var infowindow;
 
 function initMap() {
 
 	map = new google.maps.Map(document.getElementById('map'), {
-		zoom: 8,
+		zoom: 15,
 		center: {lat: -34.397, lng: 150.644}
 	});
 
@@ -28,15 +28,48 @@ function MapViewModel(){
 			map.setCenter(results[0].geometry.location);
 			 self.marker = new google.maps.Marker({
 				map: map,
-				position: results[0].geometry.location
+				center: results[0].geometry.location,
+      			zoom: 15
 			});
-			} else {
+			infowindow = new google.maps.InfoWindow();
+    		self.service = new google.maps.places.PlacesService(map);
+    		self.service.nearbySearch({
+    			location: results[0].geometry.location,
+    			radius: 500,
+    			types: ['store']
+  			}, callback);
+    		} 
+			else {
 			alert('Geocode was not successful for the following reason: ' + status);
 			};
 	});
 	};
-
 };
+
+
+function callback(results, status) {
+
+  if (status === google.maps.places.PlacesServiceStatus.OK) {
+    for (var i = 0; i < results.length; i++) {
+      createMarker(results[i]);
+    }
+  }
+}
+
+function createMarker(place) {
+
+  var placeLoc = place.geometry.location;
+  var marker = new google.maps.Marker({
+    map: map,
+    position: place.geometry.location
+  });
+
+  google.maps.event.addListener(marker, 'click', function() {
+    infowindow.setContent(place.name);
+    infowindow.open(map, this);
+
+  });
+}
 
 function startApp(){
 	initMap(); //call the initMap function here
