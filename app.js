@@ -4,22 +4,19 @@
 var map;
 var infowindow;
 
+// creates an instance of the google Maps class with the global map variable
+// and sets the initial location to a certain geographic location through coordinates
 function initMap() {
-
-
 	map = new google.maps.Map(document.getElementById('map'), {
 		zoom: 15,
 		center: {lat: -34.397, lng: 150.644}
 	});
-
 };
 
 // ViewModel
 function MapViewModel(){
-    
 	var self = this;
 	//ViewModel gets the data from the submit button and stores it in the observable variable address
-	
 	self.address = ko.observable("sydney, NSW");
 	// Now that we have the address, we can use geocoder to get the location and display marker
 	self.geocoder = new google.maps.Geocoder();
@@ -29,10 +26,12 @@ function MapViewModel(){
 			self.geocoder.geocode({'address': self.address()}, function(results, status) {
 			
 			if (status === google.maps.GeocoderStatus.OK) {
+
             map = new google.maps.Map(document.getElementById('map'), {
       			center: results[0].geometry.location,
       			zoom: 15
             });
+
 			map.setCenter(results[0].geometry.location);
 			 self.marker = new google.maps.Marker({
 				map: map,
@@ -81,14 +80,6 @@ function createMarker(place) {
     infowindow.open(map, this);
 
   });
-}
-
-function deleteMarker(results) {
-
-    for (var i = 0; i < results.length; i++) {
-      createMarker(null);
-    }
-  
 }
 
 function startApp(){
