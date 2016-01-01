@@ -5,7 +5,7 @@ var map;
 var infowindow;
 
 // creates an instance of the google Maps class with the global map variable
-// and sets the initial location to a certain geographic location through coordinates
+// and sets the initial location to a certain geographic place through coordinates
 function initMap() {
 	map = new google.maps.Map(document.getElementById('map'), {
 		zoom: 15,
@@ -13,20 +13,30 @@ function initMap() {
 	});
 };
 
+
+//Model Functions and Classes
+
+function google_geocode(){
+
+
+};
 // ViewModel
 function MapViewModel(){
 	var self = this;
-	//ViewModel gets the data from the submit button and stores it in the observable variable address
-	self.address = ko.observable("sydney, NSW");
+	// ViewModel gets the data from the submit button and stores it in the observable variable address
+	// Define all the observables here
+	self.address = ko.observable("sydney, NSW"); 
 	// Now that we have the address, we can use geocoder to get the location and display marker
+	// Define and use google maps objects here
 	self.geocoder = new google.maps.Geocoder();
+    // Create other functions to communicate with the Model, Observables, and Google's Maps (this can be thought of as a View)
 
 	self.displayLocMarker = function(){
 		    
 			self.geocoder.geocode({'address': self.address()}, function(results, status) {
 			
 			if (status === google.maps.GeocoderStatus.OK) {
-
+			//to create new markers and delete old ones for every new location submission
             map = new google.maps.Map(document.getElementById('map'), {
       			center: results[0].geometry.location,
       			zoom: 15
@@ -53,8 +63,6 @@ function MapViewModel(){
 			};
 	});
 	};
-
-	
 };
 
 
@@ -78,10 +86,10 @@ function createMarker(place) {
   google.maps.event.addListener(marker, 'click', function() {
     infowindow.setContent(place.name);
     infowindow.open(map, this);
-
   });
 }
 
+//This function is google maps API's callback function
 function startApp(){
 	initMap(); //call the initMap function here
 	ko.applyBindings(new MapViewModel()); //bind the viewmodel with Knockout
