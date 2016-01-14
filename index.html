@@ -7,11 +7,10 @@
 	<link rel="stylesheet" type="text/css" href="style.css">
   </head>
   <body>
-    <!-- Search Bar -->
-    <div id="floating-panel">
-      <input id="address" type="textbox" data-bind="value: address">
-      <input id="submit" type="button" data-bind="click: listOfLocations" value="Geocode">
-    </div>
+    <!-- Form Search Bar -->
+    <form data-bind="submit: listOfLocations" id="floating-panel">
+      <input type="text" id="address" data-bind="value: address">
+    </form>
 	<!-- Display Map -->
   <div id="map"></div>
 	<!-- JS Scripts -->
