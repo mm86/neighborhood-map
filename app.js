@@ -12,12 +12,11 @@ function initMap() {
 	});
 };
 //Start of MODEL in the MVVM pattern
-function Location(name,geometric_location){
+function Location(marker){
 
 	var self = this;
-	self.name = name;
-	self.geometric_location = geometric_location;
-
+	self.marker = marker;
+	
 
 };
 //End of MODEL
@@ -34,7 +33,8 @@ function MapViewModel() {
 	// Create other functions to communicate with the Model, Observables, and Google's Maps (this can be thought of as a View)
 	// array that holds a list of location objects, make this an observable array.why observable? cause the list 
 	// is dynamic and changes for every address input.
-   
+    self.count = 0;
+    self.infoWindowList = [];
 	self.locationListArray = ko.observableArray(); 
 	self.listOfLocations = function() {
 
@@ -82,11 +82,32 @@ function MapViewModel() {
       			position: place.geometry.location
     		});
     	 
-        //locationListArray is an array that is a collection of objects. each object has a title and position property.
-		self.locationListArray.push(new Location(marker.title,marker.position));    
+        //locationListArray is an array that is a collection of objects(represents data for this application). 
+        //each object has a title and position property.
+		self.locationListArray.push(new Location(marker)); 	
     	bounds.extend(place.geometry.location);	
 		}
  		map.fitBounds(bounds);
+	};
+    
+	self.animateMarkers = function(data,event){
+        
+		var infowindow = new google.maps.InfoWindow();
+		var searchTerm = event.target.innerHTML;
+	
+        for(var i = 0, len = self.locationListArray().length; i < len; i++) {  
+		if(searchTerm === self.locationListArray()[i].marker.title){
+        		 infowindow.setContent(self.locationListArray()[i].marker.title);
+                 infowindow.open(map, self.locationListArray()[i].marker);
+				 self.infoWindowList.push(infowindow);
+				 if(self.count>0){self.infoWindowList[self.count-1].close();}
+				 self.count=self.count+1;
+				 self.locationListArray()[i].marker.setAnimation(google.maps.Animation.BOUNCE);
+				(function(clickedMarker) {
+                	setTimeout(function(){ clickedMarker.setAnimation(null); }, 750);
+				})(self.locationListArray()[i].marker);		
+		}
+	    };
 	};
 };
 
