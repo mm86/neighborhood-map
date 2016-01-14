@@ -72,7 +72,6 @@ function MapViewModel() {
         position: place.geometry.location
       });
       //locationListArray is an array that is a collection of objects(represents data for this application). 
-      //each object has a title and position property.
       self.locationListArray.push(new Location(marker));
       bounds.extend(place.geometry.location);
     }
