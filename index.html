@@ -13,8 +13,13 @@
       <input id="submit" type="button" data-bind="click: displayLocMarker" value="Geocode">
     </div>
 	<!-- Display Map -->
-    <div id="map"></div>
+  <div id="map"></div>
 	<!-- JS Scripts -->
+  <div id="right-panel">
+      <h2>Results</h2>
+      <ul id="places"></ul>
+      <button id="more">More results</button>
+  </div>
 
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDoVUWsmpmUt7A5chuFfuRi6jtM5JCTwYg&callback=startApp&libraries=places" async defer></script> 
   <script src="http://ajax.aspnetcdn.com/ajax/knockout/knockout-3.3.0.js"></script>
