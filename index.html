@@ -10,14 +10,16 @@
     <!-- Search Bar -->
     <div id="floating-panel">
       <input id="address" type="textbox" data-bind="value: address">
-      <input id="submit" type="button" data-bind="click: displayLocMarker" value="Geocode">
+      <input id="submit" type="button" data-bind="click: listOfLocations" value="Geocode">
     </div>
 	<!-- Display Map -->
   <div id="map"></div>
 	<!-- JS Scripts -->
   <div id="right-panel">
       <h2>Results</h2>
-      <ul id="places"></ul>
+      <ul id="places" data-bind="foreach: locationListArray">
+        <li data-bind="text: name"></li>
+      </ul>
   </div>
 
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDoVUWsmpmUt7A5chuFfuRi6jtM5JCTwYg&callback=startApp&libraries=places" async defer></script> 
