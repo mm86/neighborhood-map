@@ -18,7 +18,7 @@
   <div id="right-panel">
       <h2>Results</h2>
       <ul id="places" data-bind="foreach: locationListArray">
-        <li data-bind="text: name"></li>
+        <li data-bind="text: marker.title, click: $root.animateMarkers"></li>
       </ul>
   </div>
 
