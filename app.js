@@ -11,8 +11,19 @@ function initMap() {
   });
 };
 //Start of MODEL in the MVVM pattern
-function Location(marker) {
-  var self = this;
+function Location(name,lat,lng,address) {
+  var self = this; 
+  self.name = name;
+  self.lat = lat;
+  self.lng = lng;
+  self.address = address;
+  //create a marker object for each location
+  var marker;
+  marker = new google.maps.Marker({
+    position: new google.maps.LatLng(self.lat, self.lng),
+    map: map,
+    title: self.name
+  });
   self.marker = marker;
 };
 //End of MODEL
@@ -65,14 +76,11 @@ function MapViewModel() {
     if (self.locationListArray().length !== 0) {
       self.locationListArray().length = 0;
     }
+
     for (var i = 0, place; place = places[i]; i++) {
-      var marker = new google.maps.Marker({
-        map: map,
-        title: place.name,
-        position: place.geometry.location
-      });
-      //locationListArray is an array that is a collection of objects(represents data for this application). 
-      self.locationListArray.push(new Location(marker));
+      
+      self.locationListArray.push(new Location(place.name,place.geometry.location.lat(),place.geometry.location.lng(),place.address));
+      
       bounds.extend(place.geometry.location);
     }
     map.fitBounds(bounds);
@@ -81,8 +89,8 @@ function MapViewModel() {
     var infowindow = new google.maps.InfoWindow();
     var searchTerm = event.target.innerHTML;
     for (var i = 0, len = self.locationListArray().length; i < len; i++) {
-      if (searchTerm === self.locationListArray()[i].marker.title) {
-        infowindow.setContent(self.locationListArray()[i].marker.title);
+      if (searchTerm === self.locationListArray()[i].name) {
+        infowindow.setContent(self.locationListArray()[i].name);
         infowindow.open(map, self.locationListArray()[i].marker);
         self.infoWindowList.push(infowindow);
         if (self.count > 0) {
@@ -97,10 +105,35 @@ function MapViewModel() {
         })(self.locationListArray()[i].marker);
       }
     };
+    self.displayYelpDetails();
   };
+
+  self.displayYelpDetails = function(){
+   
+      console.log("hi");
+  };
+
+
 };
 //This function is google maps API's callback function
 function startApp() {
   initMap(); //call the initMap function here
   ko.applyBindings(new MapViewModel()); //bind the viewmodel with Knockout
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
