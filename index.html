@@ -4,25 +4,44 @@
     <title>Knockout - Neighborhood Map</title>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
     <meta charset="utf-8">
-	<link rel="stylesheet" type="text/css" href="style.css">
+    <!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+
+
+<link rel="stylesheet" type="text/css" href="style.css">
+
   </head>
   <body>
-    <!-- Form Search Bar -->
-    <form data-bind="submit: listOfLocations" id="floating-panel">
-      <input type="text" id="address" data-bind="value: address">
+   
+    <form data-bind="submit: listOfLocations" class="input-group" id="floating-panel">
+      <input type="text" class="form-control" aria-label="..." id="address" data-bind="value: address">
+      <div class="input-group-btn">
+        <button class="btn btn-default" type="button"><span class="glyphicon glyphicon-search"></span></button>
+      </div>
     </form>
+
 	<!-- Display Map -->
   <div id="map"></div>
 	<!-- JS Scripts -->
-  <div id="right-panel">
-      <h2>Results</h2>
+  
+  
       <ul id="places" data-bind="foreach: locationListArray">
         <li data-bind="text: marker.title, click: $root.animateMarkers"></li>
       </ul>
-  </div>
+  
 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+  <!-- Latest compiled and minified JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDoVUWsmpmUt7A5chuFfuRi6jtM5JCTwYg&callback=startApp&libraries=places" async defer></script> 
   <script src="http://ajax.aspnetcdn.com/ajax/knockout/knockout-3.3.0.js"></script>
   <script src="app.js"></script> 
+
+  <script>
+  $('form').submit(function() {
+   $('ul').show();
+  });
+  </script>
  </body>
 </html>
