@@ -9,15 +9,17 @@ function initMap() {
       lng: 150.644
     }
   });
+  
+
 };
 //Start of MODEL in the MVVM pattern
-function Location(name,lat,lng,address) {
+function Location(name,lat,lng) {
   var self = this; 
   self.name = name;
   self.lat = lat;
   self.lng = lng;
-  self.address = address;
   //create a marker object for each location
+
   var marker;
   marker = new google.maps.Marker({
     position: new google.maps.LatLng(self.lat, self.lng),
@@ -42,54 +44,19 @@ function MapViewModel() {
   self.count = 0;
   self.infoWindowList = [];
   self.locationListArray = ko.observableArray();
-  self.listOfLocations = function() {
-    self.geocoder.geocode({
-      'address': self.address()
-    }, function(results, status) {
-      if (status === google.maps.GeocoderStatus.OK) {
-        map = new google.maps.Map(document.getElementById('map'), {
-          center: results[0].geometry.location,
-          zoom: 15
-        });
-        var service = new google.maps.places.PlacesService(map);
-        service.nearbySearch({
-          location: results[0].geometry.location,
-          radius: 2000,
-          types: ['aquarium', 'campground', 'zoo', 'amusement_park', 'park',
-            'museum'
-          ]
-        }, self.processResults); //callback function will be called back (or executed) inside the nearbySearch function
-      } else {
-        alert('Geocode was not successful for the following reason: ' + status);
-      }
-    });
-  }
-  self.processResults = function(results, status) {
-    if (status !== google.maps.places.PlacesServiceStatus.OK) {
-      return;
-    } else {
-      self.createMarkers(results);
-    }
-  };
-  self.createMarkers = function(places) {
-    var bounds = new google.maps.LatLngBounds();
-    if (self.locationListArray().length !== 0) {
-      self.locationListArray().length = 0;
-    }
+  self.listOfLocations = function(){
+      
+      if(self.locationListArray().length !== 0){self.locationListArray().length = 0;}
+      self.getYelpData(self.address());
 
-    for (var i = 0, place; place = places[i]; i++) {
-      
-      self.locationListArray.push(new Location(place.name,place.geometry.location.lat(),place.geometry.location.lng(),place.address));
-      
-      bounds.extend(place.geometry.location);
-    }
-    map.fitBounds(bounds);
-  };
+  }
+
   self.animateMarkers = function(data, event) {
     var infowindow = new google.maps.InfoWindow();
     var searchTerm = event.target.innerHTML;
     for (var i = 0, len = self.locationListArray().length; i < len; i++) {
       if (searchTerm === self.locationListArray()[i].name) {
+       self.getYelpData(self.locationListArray()[i].lat,self.locationListArray()[i].lng);
         infowindow.setContent(self.locationListArray()[i].name);
         infowindow.open(map, self.locationListArray()[i].marker);
         self.infoWindowList.push(infowindow);
@@ -105,10 +72,9 @@ function MapViewModel() {
         })(self.locationListArray()[i].marker);
       }
     };
-    self.displayYelpDetails();
   };
 
-  self.displayYelpDetails = function(){
+  self.getYelpData = function(address){
  /**
  * Generates a random number and returns it as a string for OAuthentication
  * @return {string}
@@ -127,9 +93,9 @@ var yelp_url = 'http://api.yelp.com/v2/search';
       oauth_signature_method: 'HMAC-SHA1',
       oauth_version : '1.0',
       callback: 'cb', // This is crucial to include for jsonp implementation in AJAX or else the oauth-signature will be wrong.
-      location: 'chicago',
-    term: 'food',
-    limit: 1
+      location: address,
+      term: 'parks',
+      limit: 20
       
     };
 
@@ -146,8 +112,15 @@ var yelp_url = 'http://api.yelp.com/v2/search';
       dataType: 'jsonp',
       jsonpCallback: 'cb',
       success: function(results) {
-      // Do stuff with results
-      console.log("Yay");
+      console.log(results);
+      map = new google.maps.Map(document.getElementById('map'), {
+          center: {lat:results.region.center.latitude,lng:results.region.center.longitude},
+          zoom: 12
+      });
+      for(var i = 0; i < results.businesses.length;i++){
+        self.locationListArray.push(new Location(results.businesses[i].name,results.businesses[i].location.coordinate.latitude,results.businesses[i].location.coordinate.longitude));
+        
+      }
       },
       fail: function(xhr, status, error) {
       console.log("An AJAX error occured: " + status + "\nError: " + error + "\nError detail: " + xhr.responseText);
