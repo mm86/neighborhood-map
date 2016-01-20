@@ -14,20 +14,32 @@
   </head>
   <body>
    
-    <form data-bind="submit: listOfLocations" class="input-group" id="floating-panel">
+    <form data-bind="submit: listOfLocations" class="input-group" id="search">
       <input type="text" class="form-control" aria-label="..." id="address" data-bind="value: address">
       <div class="input-group-btn">
         <button class="btn btn-default" type="button"><span class="glyphicon glyphicon-search"></span></button>
       </div>
     </form>
+    <form class="input-group" id="filter">
+      <input type="search" class="form-control" aria-label="..." data-bind="value: query, valueUpdate: 'keyup'">
+    </form>
 
 	<!-- Display Map -->
   <div id="map"></div>
 	<!-- JS Scripts -->
-  
-  
-      <ul id="places" data-bind="foreach: locationListArray">
-        <li data-bind="text: marker.title, click: $root.animateMarkers"></li>
+      <ul id="places" data-bind="foreach: searchFilter()">
+        <li data-bind="click: $root.animateMarkers.bind($data, $index())">
+         <div class="displayText">
+          <span data-bind="text: name"> </span>
+          <br>
+          <span data-bind="text: rating"></span><img data-bind="attr: {src: rating_img}"/>
+          <br>
+          <span data-bind="text: addr1"> </span>
+          <br>
+          <span data-bind="text: addr2"> </span>
+         </div>
+          <img data-bind="attr: {src: img_url}"/>
+        </li>
       </ul>
   
 <script src="oauth-signature.js"></script>
