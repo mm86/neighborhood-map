@@ -4,6 +4,7 @@
  * @author Madhu
  * @required knockout.js, bootstrap, jquery
  */
+"use strict";
 var map;
 /**
 * @function initMap 
