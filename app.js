@@ -4,19 +4,29 @@
  * @author Madhu
  * @required knockout.js, bootstrap, jquery
  */
-"use strict";
+'use strict';
 var map;
+var count = 0;
+var infoWindowList = [];
 /**
 * @function initMap 
   @description Displays the initial map on application load
 */
+
 function initMap() {
   map = new google.maps.Map(document.getElementById('map'), {
-    zoom: 15,
+    zoom: 10,
     center: {
       lat: -34.397,
       lng: 150.644
     }
+  });
+  
+  //Resize the map for responsive design consideration
+  google.maps.event.addDomListener(window, "resize", function() {
+    var center = map.getCenter();
+    google.maps.event.trigger(map, "resize");
+    map.setCenter(center); 
   });
 }
 /**
@@ -39,7 +49,7 @@ function Location(name, lat, lng, phone, img_url, rating, rating_img, addr1,addr
   self.name = name;
   self.lat = lat;
   self.lng = lng;
-  self.phone = phone; //if value not available, display NA
+  self.phone = phone; //ERROR TO FIX:if value not available, display NA
   self.img_url = img_url;
   self.rating = rating;
   self.rating_img = rating_img;
@@ -57,7 +67,9 @@ function Location(name, lat, lng, phone, img_url, rating, rating_img, addr1,addr
   } else {
     image = 'images/parks.png';
   }
+  
   //create a marker object for each location
+  //READ MORE: You are creating a new marker object for every instance of the Location class. Is this approach ok?
   var marker;
   marker = new google.maps.Marker({
     position: new google.maps.LatLng(self.lat, self.lng),
@@ -65,8 +77,47 @@ function Location(name, lat, lng, phone, img_url, rating, rating_img, addr1,addr
     icon: image,
     title: self.name
   });
+  
+
   self.marker = marker;
+  self.typeVisible = ko.observable(false);
+  self.nameVisible = ko.observable(true);
+
+  self.showTypeLink = function() {
+      self.typeVisible(!self.typeVisible());
+      self.nameVisible(!self.nameVisible());
+    };
+
+  self.showNameLink = function() {
+      console.log("showNamelink");
+      self.typeVisible(!self.typeVisible());
+      self.nameVisible(!self.nameVisible());
+    };
+  
+  self.infowindow = new google.maps.InfoWindow;
+  
+    self.marker.addListener('click', function(){
+
+      /* Set timeout animation */
+      self.marker.setAnimation(google.maps.Animation.BOUNCE);
+      setTimeout(function(){ self.marker.setAnimation(null); }, 1400);
+      //contentString = '<h4>' + place.name + '</h4>\n<p>' + place.street + '</p>\n<p>' + place.city + '</p><a href= ' + place.url + '>' + place.url + '</a>';   
+      /* Open info window and set its content */
+
+      self.infowindow.setContent(self.marker.title);
+      self.infowindow.open(map, self.marker)
+      //setTimeout(function() {self.infowindow.open(null);}, 750);
+      infoWindowList.push(self.infowindow);
+    //close previously open infowindow
+    if (count > 0) {
+      infoWindowList[count - 1].close();
+    }
+    count = count + 1;
+    })
+
 }
+
+
 
 /**
  * @class MapViewModel
@@ -76,28 +127,47 @@ function MapViewModel() {
   var self = this;
   self.address = ko.observable("sydney, NSW");
   self.query = ko.observable('');
-  self.markerList = ko.observableArray();
+
+  self.test = ko.observableArray();
   self.geocoder = new google.maps.Geocoder();
-  self.count = 0;
-  self.infoWindowList = [];
+  
+
   self.locationListArray = ko.observableArray();
+  
 /**
  * @function listOfLocations
  * @description Binds with the form element. Used for retrieving information from Yelp API for each location submission
  */
   self.listOfLocations = function() {
+    
     if (self.locationListArray().length !== 0) {//set the locationListArray to empty for every new address search.
       self.locationListArray().length = 0;
     }
+    
     self.getYelpData(self.address()); //call Yelp API for retrieving list of locations and their information for further display
   };
+
+
 /**
  * @function animateMarkers
  * @description For every list item clicked on the display, corresponding marker is bounced along with an infowindow 
  * represting information about the marker.
  * @param {number} index : Get the index of the list item clicked
  */
-  self.animateMarkers = function(index) {
+  self.animateMarkers = function(data) { 
+    
+    //get the index number of the list item clicked.
+    var index;
+      for(var i = 0, len = self.locationListArray().length; i < len; i++) {
+      if (self.locationListArray()[i].name === data.name) {
+        index = i;
+        break;
+      }
+    }
+
+    google.maps.event.trigger(self.locationListArray()[index].marker, 'click');
+
+    /*
     var infowindow = new google.maps.InfoWindow();
     var infoContent = '<div><h5>' + self.locationListArray()[index].name +
       '</h5>' + '<img src=' + self.locationListArray()[index].rating_img +
@@ -105,26 +175,17 @@ function MapViewModel() {
     infowindow.setContent(infoContent);
     infowindow.open(map, self.locationListArray()[index].marker);
     self.infoWindowList.push(infowindow);
+    //close previously open infowindow
     if (self.count > 0) {
       self.infoWindowList[self.count - 1].close();
     }
     self.count = self.count + 1;
+    //set the animation to bounce
     self.locationListArray()[index].marker.setAnimation(google.maps.Animation.BOUNCE);
-    (function(clickedMarker) {
-      setTimeout(function() {
-        clickedMarker.setAnimation(null);
-      }, 750);
-    })(self.locationListArray()[index].marker);  
+    setTimeout(function(){ self.locationListArray()[index].marker.setAnimation(null); }, 750);*/
   };
-/**
- * @function displayMarker
- * @description Sets the marker visible during dynamic live search/filter
- */
-  self.displayMarker = function() {
-    self.markerList().forEach(function(marker) {
-      marker.setVisible(true);
-    });
-  };
+
+
 
 /**
  * @function searchFilter
@@ -133,21 +194,25 @@ function MapViewModel() {
   self.searchFilter = ko.computed(function() {
     var filter = self.query().toLowerCase();
     if (!filter) {
-      self.displayMarker();
+      self.locationListArray().forEach(function(mk) {
+      mk.marker.setVisible(true);
+      });
       return self.locationListArray();
     } else {
-      return ko.utils.arrayFilter(self.locationListArray(), function(point) {
-        for (var i = 0; i < self.markerList().length; i++) {
-          if (self.markerList()[i].title.toLowerCase().indexOf(filter) !== -1) {
-            self.markerList()[i].setVisible(true);
+
+      return ko.utils.arrayFilter(self.locationListArray(), function(loc) {
+        for (var i = 0; i < self.locationListArray().length; i++) {
+          if (self.locationListArray()[i].marker.title.toLowerCase().indexOf(filter) !== -1) {
+            self.locationListArray()[i].marker.setVisible(true);
           } else {
-            self.markerList()[i].setVisible(false);
+            self.locationListArray()[i].marker.setVisible(false);
           }
         }
-        return point.name.toLowerCase().indexOf(self.query().toLowerCase()) >= 0;
+        return loc.name.toLowerCase().indexOf(self.query().toLowerCase()) >= 0;
       });
     }
   });
+
 
 /**
  * @function getYelpData
@@ -187,7 +252,7 @@ function MapViewModel() {
       dataType: 'jsonp',
       jsonpCallback: 'cb',
       success: function(results) {
-        
+       
         map = new google.maps.Map(document.getElementById('map'), {
           center: {
             lat: results.region.center.latitude,
@@ -195,6 +260,8 @@ function MapViewModel() {
           },
           zoom: 12
         });
+
+        map.panBy(-200, 90);
         for (var i = 0; i < results.businesses.length; i++) {
           self.locationListArray.push(new Location(results.businesses[i].name,
             results.businesses[i].location.coordinate.latitude, results.businesses[
@@ -203,7 +270,7 @@ function MapViewModel() {
             results.businesses[i].rating_img_url_small, results.businesses[i].location
             .display_address[0], results.businesses[i].location.display_address[
               1], results.businesses[i].categories[0][0]));
-          self.markerList.push(self.locationListArray()[i].marker);
+          
         }
       },
       fail: function(xhr, status, error) {
@@ -215,7 +282,7 @@ function MapViewModel() {
 }
 /**
  * @function startApp
- * @description callback function that loads once google Maps is ready
+ * @description callback function that is executed once google Maps asynchronous load is ready
  */
 function startApp() {
   initMap();
