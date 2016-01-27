@@ -1,59 +1,66 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Knockout - Neighborhood Map</title>
-    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
-    <meta charset="utf-8">
-    <!-- Latest compiled and minified CSS -->
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+<head>
+  <title>Knockout - Neighborhood Map</title>
+  <meta content="initial-scale=1.0, user-scalable=no" name="viewport">
+  <meta charset="utf-8">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.3/normalize.css" rel="stylesheet">
+  <!-- Latest compiled and minified CSS -->
+  <link crossorigin="anonymous" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity=
+  "sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" rel="stylesheet">
+  <link href="style.css" rel="stylesheet" type="text/css">
+</head>
 
+<body>
 
-
-<link rel="stylesheet" type="text/css" href="style.css">
-
-  </head>
-  <body>
-   
-    <form data-bind="submit: listOfLocations" class="input-group" id="search">
-      <input type="text" class="form-control" aria-label="..." id="address" data-bind="value: address">
-      <div class="input-group-btn">
-        <button class="btn btn-default" type="button"><span class="glyphicon glyphicon-search"></span></button>
-      </div>
-    </form>
-    <form class="input-group" id="filter">
-      <input type="search" class="form-control" aria-label="..." data-bind="value: query, valueUpdate: 'keyup'">
-    </form>
-
-	<!-- Display Map -->
   <div id="map"></div>
-	<!-- JS Scripts -->
-      <ul id="places" data-bind="foreach: searchFilter()">
-        <li data-bind="click: $root.animateMarkers.bind($data, $index())">
-         <div class="displayText">
-          <span data-bind="text: name"> </span>
-          <br>
-          <span data-bind="text: rating"></span><img data-bind="attr: {src: rating_img}"/>
-          <br>
-          <span data-bind="text: addr1"> </span>
-          <br>
-          <span data-bind="text: addr2"> </span>
-         </div>
-          <img data-bind="attr: {src: img_url}"/>
-        </li>
-      </ul>
-  
-<script src="oauth-signature.js"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
-  <!-- Latest compiled and minified JavaScript -->
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
-  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDoVUWsmpmUt7A5chuFfuRi6jtM5JCTwYg&callback=startApp&libraries=places" async defer></script> 
-  <script src="http://ajax.aspnetcdn.com/ajax/knockout/knockout-3.3.0.js"></script>
-  <script src="app.js"></script> 
 
+  <form class="input-group" data-bind="submit: listOfLocations" id="search" name="search">
+    <input aria-label="..." class="form-control" data-bind="value: address" id="address" type="text">
+    <div class="input-group-btn">
+      <button class="btn btn-default" type="button"><span class="glyphicon glyphicon-search"></span></button>
+    </div>
+  </form>
+
+
+  <form class="input-group" id="filter" name="filter">
+    <input aria-label="..." class="form-control" data-bind="value: query, valueUpdate: 'keyup'" placeholder="Filter..." type="search">
+  </form>
+
+  <!--<ul data-bind="foreach: searchFilter()" id="places">
+    <li data-bind="click: $root.animateMarkers.bind($data, $index())">
+        <span data-bind="text: name, click: showTypeLink, visible: nameVisible"></span>
+        <span data-bind="text: rating, click: showNameLink, visible: typeVisible"></span>
+        
+    </li>
+  </ul>-->
+  <ul data-bind="foreach: searchFilter()" id="places">
+    
+    <li data-bind="click: $root.animateMarkers">
+      <div class="displayText">
+        <span data-bind="text: name"></span><br>
+        <span data-bind="text: rating"></span><img data-bind="attr: {src: rating_img}"><br>
+        <span class="addr" data-bind="text: addr1"></span><br>
+        <span class="addr" data-bind="text: addr2"></span>
+      </div>
+      <img class="imgUrl" data-bind="attr: {src: img_url}">
+    </li>
+  </ul>
+
+
+  <script src="oauth-signature.js">
+  </script> 
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script> 
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script> 
+  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDoVUWsmpmUt7A5chuFfuRi6jtM5JCTwYg&callback=startApp&libraries=places"></script> 
+  <script src="http://ajax.aspnetcdn.com/ajax/knockout/knockout-3.3.0.js"></script> 
+  <script src="app.js"></script> 
   <script>
-  $('form').submit(function() {
-   $('ul').show();
-  });
+   $('form').submit(function() {
+    $('ul').show();
+   });
+
+
   </script>
- </body>
+</body>
 </html>
