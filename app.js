@@ -167,22 +167,7 @@ function MapViewModel() {
 
     google.maps.event.trigger(self.locationListArray()[index].marker, 'click');
 
-    /*
-    var infowindow = new google.maps.InfoWindow();
-    var infoContent = '<div><h5>' + self.locationListArray()[index].name +
-      '</h5>' + '<img src=' + self.locationListArray()[index].rating_img +
-      '><br>' + self.locationListArray()[index].phone + '</div>';
-    infowindow.setContent(infoContent);
-    infowindow.open(map, self.locationListArray()[index].marker);
-    self.infoWindowList.push(infowindow);
-    //close previously open infowindow
-    if (self.count > 0) {
-      self.infoWindowList[self.count - 1].close();
-    }
-    self.count = self.count + 1;
-    //set the animation to bounce
-    self.locationListArray()[index].marker.setAnimation(google.maps.Animation.BOUNCE);
-    setTimeout(function(){ self.locationListArray()[index].marker.setAnimation(null); }, 750);*/
+   
   };
 
 
