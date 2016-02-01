@@ -43,7 +43,7 @@ function initMap() {
  * @param {string} addr2 - Address line no:2 of the location
  * @param {string} category - Catgegory under which the location is placed.
  */
-function Location(name, lat, lng, phone, img_url, rating, rating_img, addr1,addr2, category) {
+function Location(name, lat, lng, phone, img_url, rating, rating_img, addr1,addr2, category, snippet,review_url) {
   var self = this;
   self.name = name;
   self.lat = lat;
@@ -55,46 +55,8 @@ function Location(name, lat, lng, phone, img_url, rating, rating_img, addr1,addr
   self.addr1 = addr1;
   self.addr2 = addr2;
   self.category = category;
-  //Change marker icons based on their category
-  var image;
-  if (self.category === 'Zoos') {
-    image = 'images/zoo.png';
-  } else if (self.category === 'Aquariums') {
-    image = 'images/fish.png';
-  } else if (self.category === 'Botanical Gardens') {
-    image = 'images/garden.png';
-  } else {
-    image = 'images/parks.png';
-  }
-  
-  //create a marker object for each location
-  //READ MORE: You are creating a new marker object for every instance of the Location class. Is this approach ok?
-        var marker;
-        marker = new google.maps.Marker({
-          position: new google.maps.LatLng(self.lat, self.lng),
-          map: map,
-          icon: image,
-          title: self.name
-        });
-  
-
-  self.marker = marker;
-  self.marker.addListener("click",function(){self.toggleBounce()});
-  self.toggleBounce = function(){
-     var infowindow = new google.maps.InfoWindow;
-      console.log("hi");
-      /* Set timeout animation */
-      self.marker.setAnimation(google.maps.Animation.BOUNCE);
-      setTimeout(function(){ self.marker.setAnimation(null); }, 1400);
-      //self.infocontent = '<img src="http://openweathermap.org/img/w/'+self.weatherIcon+'.png">';   
-      /* Open info window and set its content */
-      
-      infowindow.setContent("hi");
-      infowindow.open(map, self.marker)
-      //setTimeout(function() {self.infowindow.open(null);}, 750);
-     
-  }
-
+  self.snippet = snippet;
+  self.review_url = review_url;
   self.typeVisible = ko.observable(false);
   self.nameVisible = ko.observable(true);
  
@@ -104,7 +66,6 @@ function Location(name, lat, lng, phone, img_url, rating, rating_img, addr1,addr
     };
 
   self.showNameLink = function() {
-      console.log("showNamelink");
       self.typeVisible(!self.typeVisible());
       self.nameVisible(!self.nameVisible());
     };
@@ -119,12 +80,11 @@ function MapViewModel() {
   var self = this;
   self.address = ko.observable("sydney, NSW");
   self.query = ko.observable('');
-
   self.count = 0;
   self.infoWindowList = [];
   self.geocoder = new google.maps.Geocoder();
   self.locationListArray = ko.observableArray();
-  
+  self.markerList = ko.observableArray();
   
 /**
  * @function listOfLocations
@@ -152,22 +112,14 @@ function MapViewModel() {
     
     //get the index number of the list item clicked.
     var index;
+     
       for(var i = 0, len = self.locationListArray().length; i < len; i++) {
       if (self.locationListArray()[i].name === data.name) {
         index = i;
         break;
       }
     }
-     
-    self.locationListArray()[index].marker.addListener("click",self.markerBounce(index));
-
-  };
-  
-
-  self.markerBounce = function(index){
-
-     
-
+   
     var url = 'http://api.openweathermap.org/data/2.5/weather?lat='+self.locationListArray()[index].lat+'&lon='+self.locationListArray()[index].lng+'&appid=44db6a862fba0b067b1930da0d769e98';
     
     var settings = {
@@ -178,14 +130,11 @@ function MapViewModel() {
        self.weatherIcon = results.weather[0].icon;
        self.infowindow = new google.maps.InfoWindow;
   
-      /* Set timeout animation */
-      self.locationListArray()[index].marker.setAnimation(google.maps.Animation.BOUNCE);
-      setTimeout(function(){ self.locationListArray()[index].marker.setAnimation(null); }, 1400);
-      self.infocontent = '<img src="http://openweathermap.org/img/w/'+self.weatherIcon+'.png">';   
-      /* Open info window and set its content */
-      
+      self.markerList()[i].setAnimation(google.maps.Animation.BOUNCE);
+      setTimeout(function(){self.markerList()[i].setAnimation(null); }, 1400);
+      self.infocontent = '<img src="http://openweathermap.org/img/w/'+self.weatherIcon+'.png">'+'<p>'+self.locationListArray()[i].name+'</p>';
       self.infowindow.setContent(self.infocontent);
-      self.infowindow.open(map, self.locationListArray()[index].marker)
+      self.infowindow.open(map, self.markerList()[i])
       //setTimeout(function() {self.infowindow.open(null);}, 750);
      self.infoWindowList.push(self.infowindow);
     //close previously open infowindow
@@ -203,9 +152,10 @@ function MapViewModel() {
     $.ajax(settings);
   
      
+     
   };
-
   
+
 
 /**
  * @function searchFilter
@@ -214,20 +164,20 @@ function MapViewModel() {
   self.searchFilter = ko.computed(function() {
     var filter = self.query().toLowerCase();
     if (!filter) {
-      self.locationListArray().forEach(function(mk) {
+     /* self.locationListArray().forEach(function(mk) {
       mk.marker.setVisible(true);
-      });
+      });*/
       return self.locationListArray();
     } else {
 
       return ko.utils.arrayFilter(self.locationListArray(), function(loc) {
-        for (var i = 0; i < self.locationListArray().length; i++) {
+        /*for (var i = 0; i < self.locationListArray().length; i++) {
           if (self.locationListArray()[i].marker.title.toLowerCase().indexOf(filter) !== -1) {
             self.locationListArray()[i].marker.setVisible(true);
           } else {
             self.locationListArray()[i].marker.setVisible(false);
           }
-        }
+        }*/
         return loc.name.toLowerCase().indexOf(self.query().toLowerCase()) >= 0;
       });
     }
@@ -272,7 +222,7 @@ function MapViewModel() {
       dataType: 'jsonp',
       jsonpCallback: 'cb',
       success: function(results) {
-        
+        console.log(results);
         
         map = new google.maps.Map(document.getElementById('map'), {
           center: {
@@ -290,10 +240,41 @@ function MapViewModel() {
             results.businesses[i].image_url, results.businesses[i].rating,
             results.businesses[i].rating_img_url_small, results.businesses[i].location
             .display_address[0], results.businesses[i].location.display_address[
-              1], results.businesses[i].categories[0][0]));
+              1], results.businesses[i].categories[0][0],results.businesses[i].snippet_text,results.businesses[i].url));
 
+    //Change marker icons based on their category
+  var image;
+  if (results.businesses[i].categories[0][0] === 'Zoos') {
+    image = 'images/zoo.png';
+  } else if (results.businesses[i].categories[0][0] === 'Aquariums') {
+    image = 'images/fish.png';
+  } else if (results.businesses[i].categories[0][0] === 'Botanical Gardens') {
+    image = 'images/garden.png';
+  } else {
+    image = 'images/parks.png';
+  }
+
+
+      var marker;
+  marker = new google.maps.Marker({
+    position: new google.maps.LatLng(self.locationListArray()[i].lat, self.locationListArray()[i].lng),
+    map: map,
+    icon: image,
+    title: self.locationListArray()[i].name
+  });
+
+    self.markerList.push(marker);
+    
           
         }
+  
+   
+  
+
+  
+  
+
+
       },
       fail: function(xhr, status, error) {
         console.log("An AJAX error occured: " + status + "\nError: " + error + "\nError detail: " + xhr.responseText);
