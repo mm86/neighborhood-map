@@ -43,23 +43,25 @@ function initMap() {
  * @param {string} addr2 - Address line no:2 of the location
  * @param {string} category - Catgegory under which the location is placed.
  */
-function Location(name, lat, lng, phone, img_url, rating, rating_img, addr1,addr2, category, snippet,review_url) {
+function Location(data) {
   var self = this;
-  self.name = name;
-  self.lat = lat;
-  self.lng = lng;
-  self.phone = phone; //ERROR TO FIX:if value not available, display NA
-  self.img_url = img_url;
-  self.rating = rating;
-  self.rating_img = rating_img;
-  self.addr1 = addr1;
-  self.addr2 = addr2;
-  self.category = category;
-  self.snippet = snippet;
-  self.review_url = review_url;
+  self.name = data.name;
+  self.lat = data.location.coordinate.latitude;
+  self.lng = data.location.coordinate.longitude;
+  self.phone = data.phone; //ERROR TO FIX:if value not available, display NA
+  self.img_url = data.image_url;
+  self.rating = data.rating;
+  self.rating_img = data.rating_img_url_small;
+  self.addr1 = data.location.display_address[0];
+  self.addr2 = data.location.display_address[1];
+  self.category = data.categories[0][0];
+  self.snippet = data.snippet_text;
+  self.review_url = data.url;
   self.typeVisible = ko.observable(false);
   self.nameVisible = ko.observable(true);
  
+
+
   self.showTypeLink = function() {
       self.typeVisible(!self.typeVisible());
       self.nameVisible(!self.nameVisible());
@@ -85,6 +87,7 @@ function MapViewModel() {
   self.geocoder = new google.maps.Geocoder();
   self.locationListArray = ko.observableArray();
   self.markerList = ko.observableArray();
+  self.test;
   
 /**
  * @function listOfLocations
@@ -93,7 +96,13 @@ function MapViewModel() {
   self.listOfLocations = function() {
     
     if (self.locationListArray().length !== 0) {//set the locationListArray to empty for every new address search.
-
+      var jsonData = ko.toJSON(self.locationListArray);
+      localStorage.setItem(self.test, jsonData);
+      self.example = JSON.parse(localStorage.getItem(self.test));
+      self.parsed = ko.observableArray(ko.utils.arrayMap(self.example, function(u) {
+            return new Location(u);
+      }));
+    
       self.locationListArray().length = 0;
     }
     
@@ -222,7 +231,6 @@ function MapViewModel() {
       dataType: 'jsonp',
       jsonpCallback: 'cb',
       success: function(results) {
-        console.log(results);
         
         map = new google.maps.Map(document.getElementById('map'), {
           center: {
@@ -234,13 +242,15 @@ function MapViewModel() {
 
         map.panBy(-200, 90);
         for (var i = 0; i < results.businesses.length; i++) {
-          self.locationListArray.push(new Location(results.businesses[i].name,
+         self.locationListArray.push(new Location(results.businesses[i]));
+
+         /* self.locationListArray.push(new Location(results.businesses[i].name,
             results.businesses[i].location.coordinate.latitude, results.businesses[
               i].location.coordinate.longitude, results.businesses[i].phone,
             results.businesses[i].image_url, results.businesses[i].rating,
             results.businesses[i].rating_img_url_small, results.businesses[i].location
             .display_address[0], results.businesses[i].location.display_address[
-              1], results.businesses[i].categories[0][0],results.businesses[i].snippet_text,results.businesses[i].url));
+              1], results.businesses[i].categories[0][0],results.businesses[i].snippet_text,results.businesses[i].url)); */
 
     //Change marker icons based on their category
   var image;
