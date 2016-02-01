@@ -59,9 +59,7 @@ function Location(data) {
   self.review_url = data.url;
   self.typeVisible = ko.observable(false);
   self.nameVisible = ko.observable(true);
- 
-
-
+  
   self.showTypeLink = function() {
       self.typeVisible(!self.typeVisible());
       self.nameVisible(!self.nameVisible());
@@ -87,7 +85,7 @@ function MapViewModel() {
   self.geocoder = new google.maps.Geocoder();
   self.locationListArray = ko.observableArray();
   self.markerList = ko.observableArray();
-  self.test;
+  
   
 /**
  * @function listOfLocations
@@ -96,14 +94,16 @@ function MapViewModel() {
   self.listOfLocations = function() {
     
     if (self.locationListArray().length !== 0) {//set the locationListArray to empty for every new address search.
-      var jsonData = ko.toJSON(self.locationListArray);
+      //var jsonData = ko.toJSON(self.locationListArray);
       localStorage.setItem(self.test, jsonData);
       self.example = JSON.parse(localStorage.getItem(self.test));
       self.parsed = ko.observableArray(ko.utils.arrayMap(self.example, function(u) {
             return new Location(u);
       }));
-    
+      console.log(self.parsed()[0].name);
+      
       self.locationListArray().length = 0;
+      self.markerList().length = 0;
     }
     
     self.getYelpData(self.address()); //call Yelp API for retrieving list of locations and their information for further display
@@ -128,7 +128,7 @@ function MapViewModel() {
         break;
       }
     }
-   
+    console.log(self.locationListArray()[index].lat);
     var url = 'http://api.openweathermap.org/data/2.5/weather?lat='+self.locationListArray()[index].lat+'&lon='+self.locationListArray()[index].lng+'&appid=44db6a862fba0b067b1930da0d769e98';
     
     var settings = {
@@ -138,7 +138,7 @@ function MapViewModel() {
        
        self.weatherIcon = results.weather[0].icon;
        self.infowindow = new google.maps.InfoWindow;
-  
+      console.log(self.markerList()[i]);
       self.markerList()[i].setAnimation(google.maps.Animation.BOUNCE);
       setTimeout(function(){self.markerList()[i].setAnimation(null); }, 1400);
       self.infocontent = '<img src="http://openweathermap.org/img/w/'+self.weatherIcon+'.png">'+'<p>'+self.locationListArray()[i].name+'</p>';
@@ -254,11 +254,11 @@ function MapViewModel() {
 
     //Change marker icons based on their category
   var image;
-  if (results.businesses[i].categories[0][0] === 'Zoos') {
+  if (self.locationListArray()[i].category === 'Zoos') {
     image = 'images/zoo.png';
-  } else if (results.businesses[i].categories[0][0] === 'Aquariums') {
+  } else if (self.locationListArray()[i].category === 'Aquariums') {
     image = 'images/fish.png';
-  } else if (results.businesses[i].categories[0][0] === 'Botanical Gardens') {
+  } else if (self.locationListArray()[i].category === 'Botanical Gardens') {
     image = 'images/garden.png';
   } else {
     image = 'images/parks.png';
