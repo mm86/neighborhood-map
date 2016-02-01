@@ -22,28 +22,28 @@
     </div>
   </form>
 
-
   <form class="input-group" id="filter" name="filter">
     <input aria-label="..." class="form-control" data-bind="value: query, valueUpdate: 'keyup'" placeholder="Filter..." type="search">
   </form>
 
-  <!--<ul data-bind="foreach: searchFilter()" id="places">
-    <li data-bind="click: $root.animateMarkers.bind($data, $index())">
+  <<ul data-bind="foreach: searchFilter()" id="places">
+    <li data-bind="click: $root.animateMarkers">
+     <div data-bind="click:showTypeLink,visible:nameVisible">
+      <div class="displayText">
         <span data-bind="text: name, click: showTypeLink, visible: nameVisible"></span>
         <span data-bind="text: rating, click: showNameLink, visible: typeVisible"></span>
-        
-    </li>
-  </ul>-->
-  <ul data-bind="foreach: searchFilter()" id="places">
-    
-    <li data-bind="click: $root.animateMarkers">
-      <div class="displayText">
-        <span data-bind="text: name"></span><br>
-        <span data-bind="text: rating"></span><img data-bind="attr: {src: rating_img}"><br>
+        <br>
+        <img data-bind="attr: {src: rating_img}"><br>
         <span class="addr" data-bind="text: addr1"></span><br>
         <span class="addr" data-bind="text: addr2"></span>
       </div>
       <img class="imgUrl" data-bind="attr: {src: img_url}">
+      </div>
+      <div data-bind="visible:typeVisible">
+        <span data-bind="text: snippet"></span><br>
+        <a data-bind="attr: { href: review_url }">Yelp Review</a>
+        <span data-bind="click:showNameLink">Back to results</span>
+      </div>
     </li>
   </ul>
 
