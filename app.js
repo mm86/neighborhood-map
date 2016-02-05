@@ -72,6 +72,9 @@ function Location(data) {
   
 }
 
+
+
+
 /**
  * @class MapViewModel
  * @description Represents the ViewModel here
@@ -92,22 +95,15 @@ function MapViewModel() {
  * @description Binds with the form element. Used for retrieving information from Yelp API for each location submission
  */
   self.listOfLocations = function() {
+    //saving all addresses 
     
     if (self.locationListArray().length !== 0) {//set the locationListArray to empty for every new address search.
-      //var jsonData = ko.toJSON(self.locationListArray);
-      localStorage.setItem(self.test, jsonData);
-      self.example = JSON.parse(localStorage.getItem(self.test));
-      self.parsed = ko.observableArray(ko.utils.arrayMap(self.example, function(u) {
-            return new Location(u);
-      }));
-      console.log(self.parsed()[0].name);
-      
       self.locationListArray().length = 0;
       self.markerList().length = 0;
     }
     
     self.getYelpData(self.address()); //call Yelp API for retrieving list of locations and their information for further display
-    
+   
   };
 
   
@@ -128,7 +124,7 @@ function MapViewModel() {
         break;
       }
     }
-    console.log(self.locationListArray()[index].lat);
+    
     var url = 'http://api.openweathermap.org/data/2.5/weather?lat='+self.locationListArray()[index].lat+'&lon='+self.locationListArray()[index].lng+'&appid=44db6a862fba0b067b1930da0d769e98';
     
     var settings = {
@@ -138,7 +134,7 @@ function MapViewModel() {
        
        self.weatherIcon = results.weather[0].icon;
        self.infowindow = new google.maps.InfoWindow;
-      console.log(self.markerList()[i]);
+
       self.markerList()[i].setAnimation(google.maps.Animation.BOUNCE);
       setTimeout(function(){self.markerList()[i].setAnimation(null); }, 1400);
       self.infocontent = '<img src="http://openweathermap.org/img/w/'+self.weatherIcon+'.png">'+'<p>'+self.locationListArray()[i].name+'</p>';
@@ -231,7 +227,7 @@ function MapViewModel() {
       dataType: 'jsonp',
       jsonpCallback: 'cb',
       success: function(results) {
-        
+       
         map = new google.maps.Map(document.getElementById('map'), {
           center: {
             lat: results.region.center.latitude,
