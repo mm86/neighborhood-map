@@ -12,9 +12,7 @@
 </head>
 
 <body>
-  <div id="map">
-  </div>
-
+  <div id="map"></div>
 
   <form class="input-group" data-bind="submit: listOfLocations" id="search" name="search">
     <input aria-label="..." class="form-control" data-bind="value: address" id="address" type="text">
@@ -24,7 +22,6 @@
     </div>
   </form>
 
-
   <form class="input-group" id="filter" name="filter">
     <input aria-label="..." class="form-control" data-bind="value: query, valueUpdate: 'keyup'" placeholder="Filter..." type="search">
 
@@ -32,7 +29,6 @@
       <button class="btn btn-default list" type="button"><span class="glyphicon glyphicon-list"></span></button>
     </div>
   </form>
-
 
   <ul data-bind="foreach: searchFilter()" id="places">
     <li data-bind="click: $root.animateMarkers">
@@ -45,7 +41,6 @@
       </div>
       <img class="imgUrl" data-bind="attr: {src: img_url}">
       </div>
-
 
       <div class="review" data-bind="visible:typeVisible">
         <span data-bind="text: snippet"></span> <a data-bind="attr: { href: review_url }" target="_blank">Yelp Review</a> <span class="show-results" data-bind="click:showNameLink">Back to results</span>
@@ -66,8 +61,6 @@
   </script> 
   <script>
 
-
-
     $('form').submit(function() {
       $('ul').show();
     });
@@ -75,7 +68,6 @@
     $(".list").click(function(){
       $("ul").toggle();
      });
-
 
   </script>
 </body>
