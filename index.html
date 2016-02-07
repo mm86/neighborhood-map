@@ -4,75 +4,76 @@
   <title>Knockout - Neighborhood Map</title>
   <meta content="initial-scale=1.0, user-scalable=no" name="viewport">
   <meta charset="utf-8">
-
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.3/normalize.css" rel="stylesheet">
-  <!-- Latest compiled and minified CSS -->
-  <link crossorigin="anonymous" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity=
-  "sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.3/normalize.css" rel="stylesheet"><!-- Latest compiled and minified CSS -->
+  <link crossorigin="anonymous" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" rel=
+  "stylesheet">
   <link href="style.css" rel="stylesheet" type="text/css">
-   
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js">
+  </script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js">
+  </script>
 </head>
 
 <body>
+  <div id="map">
+  </div>
 
-  <div id="map"></div>
- 
 
   <form class="input-group" data-bind="submit: listOfLocations" id="search" name="search">
     <input aria-label="..." class="form-control" data-bind="value: address" id="address" type="text">
+
     <div class="input-group-btn">
       <button class="btn btn-default" type="button"><span class="glyphicon glyphicon-search"></span></button>
     </div>
   </form>
 
+
   <form class="input-group" id="filter" name="filter">
     <input aria-label="..." class="form-control" data-bind="value: query, valueUpdate: 'keyup'" placeholder="Filter..." type="search">
+
     <div class="input-group-btn">
       <button class="btn btn-default list" type="button"><span class="glyphicon glyphicon-list"></span></button>
     </div>
   </form>
 
+
   <ul data-bind="foreach: searchFilter()" id="places">
     <li data-bind="click: $root.animateMarkers">
-     <div data-bind="click:showTypeLink,visible:nameVisible">
+      <div data-bind="click:showTypeLink,visible:nameVisible">
       <div class="displayText">
-        <span data-bind="text: name, click: showTypeLink, visible: nameVisible"></span>
-        <span data-bind="text: rating, click: showNameLink, visible: typeVisible"></span>
-        <br>
+        <span data-bind="text: name, click: showTypeLink, visible: nameVisible"></span> <span data-bind="text: rating, click: showNameLink, visible: typeVisible"></span><br>
         <img data-bind="attr: {src: rating_img}"><br>
         <span class="addr" data-bind="text: addr1"></span><br>
         <span class="addr" data-bind="text: addr2"></span>
       </div>
       <img class="imgUrl" data-bind="attr: {src: img_url}">
       </div>
+
+
       <div class="review" data-bind="visible:typeVisible">
-        <span data-bind="text: snippet"></span>
-        <a target="_blank" data-bind="attr: { href: review_url }">Yelp Review</a>
-        <span class="show-results" data-bind="click:showNameLink">Back to results</span>
+        <span data-bind="text: snippet"></span> <a data-bind="attr: { href: review_url }" target="_blank">Yelp Review</a> <span class="show-results" data-bind="click:showNameLink">Back to results</span>
       </div>
     </li>
   </ul>
-
-
   <script src="oauth-signature.js">
   </script> 
-  
-  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDoVUWsmpmUt7A5chuFfuRi6jtM5JCTwYg&callback=startApp&libraries=places"></script> 
-  <script src="http://ajax.aspnetcdn.com/ajax/knockout/knockout-3.3.0.js"></script> 
-  <script src="app.js"></script> 
+  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDoVUWsmpmUt7A5chuFfuRi6jtM5JCTwYg&callback=startApp&libraries=places">
+  </script> 
+  <script src="http://ajax.aspnetcdn.com/ajax/knockout/knockout-3.3.0.js">
+  </script> 
+  <script src="app.js">
+  </script> 
   <script>
 
- 
 
-  $('form').submit(function() {
-    $('ul').show();
-  });
 
-  $(".list").click(function(){
-    $("ul").toggle();
-});
+    $('form').submit(function() {
+      $('ul').show();
+    });
+
+    $(".list").click(function(){
+      $("ul").toggle();
+     });
 
 
   </script>
