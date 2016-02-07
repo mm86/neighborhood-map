@@ -50,17 +50,17 @@ function Location(data) {
   self.category = data.categories[0][0];
   self.snippet = data.snippet_text;
   self.review_url = data.url;
-  self.typeVisible = ko.observable(false);
-  self.nameVisible = ko.observable(true);
+  self.reviewVisible = ko.observable(false);
+  self.dataVisible = ko.observable(true);
 
-  self.showTypeLink = function() {
-    self.typeVisible(!self.typeVisible());
-    self.nameVisible(!self.nameVisible());
+  self.showReviewData = function() {
+    self.reviewVisible(!self.reviewVisible());
+    self.dataVisible(!self.dataVisible());
   };
 
-  self.showNameLink = function() {
-    self.typeVisible(!self.typeVisible());
-    self.nameVisible(!self.nameVisible());
+  self.showLocationData = function() {
+    self.reviewVisible(!self.reviewVisible());
+    self.dataVisible(!self.dataVisible());
   };
 
 }
@@ -94,7 +94,7 @@ function MapViewModel() {
     }
 
     self.getYelpData(self.address()); //call Yelp API for retrieving list of locations and their information for further display
-
+    
   };
 
 
@@ -115,36 +115,35 @@ function MapViewModel() {
         break;
       }
     }
+    google.maps.event.trigger( self.markerList()[index], 'click' );
 
-    var url = 'http://api.openweathermap.org/data/2.5/weather?lat=' + self.locationListArray()[
-        index].lat + '&lon=' + self.locationListArray()[index].lng +
+  };
+
+  self.weatherMarkerData = function(data,lat,lng) {
+    self.infowindow = new google.maps.InfoWindow;
+    
+    
+    //call Weather API for weather details of each location
+    var url = 'http://api.openweathermap.org/data/2.5/weather?lat=' + lat + '&lon=' + lng +
       '&appid=44db6a862fba0b067b1930da0d769e98';
-
+    
     var settings = {
       url: url,
       dataType: 'jsonp',
       success: function(results) {
-
         self.weatherIcon = results.weather[0].icon;
-        self.infowindow = new google.maps.InfoWindow;
 
-        self.markerList()[i].setAnimation(google.maps.Animation.BOUNCE);
+        google.maps.event.addListener(data, 'click', function() {
+        /*self.markerList()[i].setAnimation(google.maps.Animation.BOUNCE);
         setTimeout(function() {
           self.markerList()[i].setAnimation(null);
-        }, 1400);
+        }, 1400);*/
         self.infocontent = '<img src="http://openweathermap.org/img/w/' + self.weatherIcon +
-          '.png">' + '<p>' + self.locationListArray()[i].name + '</p>';
+          '.png">' + '<p>' + data.title + '</p>';
         self.infowindow.setContent(self.infocontent);
-        self.infowindow.open(map, self.markerList()[i])
-          //setTimeout(function() {self.infowindow.open(null);}, 750);
-        self.infoWindowList.push(self.infowindow);
-        //close previously open infowindow
-        if (self.count > 0) {
-          self.infoWindowList[self.count - 1].close();
-        }
-        self.count = self.count + 1;
-
-
+        self.infowindow.open(map, data);
+  
+      });
       },
       fail: function(xhr, status, error) {
         console.log("An AJAX error occured: " + status + "\nError: " + error +
@@ -152,10 +151,8 @@ function MapViewModel() {
       }
     };
     $.ajax(settings);
-
-
-
-  };
+    };
+  
 
 
 
@@ -166,20 +163,19 @@ function MapViewModel() {
   self.searchFilter = ko.computed(function() {
     var filter = self.query().toLowerCase();
     if (!filter) {
-      /* self.locationListArray().forEach(function(mk) {
-      mk.marker.setVisible(true);
-      });*/
+      self.markerList().forEach(function(mk) {
+      mk.setVisible(true);
+      });
       return self.locationListArray();
     } else {
-
       return ko.utils.arrayFilter(self.locationListArray(), function(loc) {
-        /*for (var i = 0; i < self.locationListArray().length; i++) {
-          if (self.locationListArray()[i].marker.title.toLowerCase().indexOf(filter) !== -1) {
-            self.locationListArray()[i].marker.setVisible(true);
+         for (var i = 0; i < self.locationListArray().length; i++) {
+          if (self.markerList()[i].title.toLowerCase().indexOf(filter) !== -1) {
+            self.markerList()[i].setVisible(true);
           } else {
-            self.locationListArray()[i].marker.setVisible(false);
+            self.markerList()[i].setVisible(false);
           }
-        }*/
+        }
         return loc.name.toLowerCase().indexOf(self.query().toLowerCase()) >= 0;
       });
     }
@@ -225,7 +221,7 @@ function MapViewModel() {
       dataType: 'jsonp',
       jsonpCallback: 'cb',
       success: function(results) {
-
+        //set the map according to the result's coordinates
         map = new google.maps.Map(document.getElementById('map'), {
           center: {
             lat: results.region.center.latitude,
@@ -233,25 +229,24 @@ function MapViewModel() {
           },
           zoom: 12
         });
-
+        //change map display to display the markers on the right side of the page
         map.panBy(-200, 90);
         for (var i = 0; i < results.businesses.length; i++) {
+          //push location details into locationListArray by creating a new instance of Location class for each location.
           self.locationListArray.push(new Location(results.businesses[i]));
 
-          //Change marker icons based on their category
+          //Display different marker icons for different categories
           var image;
           if (self.locationListArray()[i].category === 'Zoos') {
             image = 'images/zoo.png';
           } else if (self.locationListArray()[i].category === 'Aquariums') {
             image = 'images/fish.png';
-          } else if (self.locationListArray()[i].category ===
-            'Botanical Gardens') {
+          } else if (self.locationListArray()[i].category === 'Botanical Gardens') {
             image = 'images/garden.png';
           } else {
             image = 'images/parks.png';
           }
-
-
+          //create a marker object for each location and display the markers on the map
           var marker;
           marker = new google.maps.Marker({
             position: new google.maps.LatLng(self.locationListArray()[i].lat,
@@ -260,10 +255,11 @@ function MapViewModel() {
             icon: image,
             title: self.locationListArray()[i].name
           });
-
+          //save the marker objects in an array
           self.markerList.push(marker);
-
+          self.weatherMarkerData(self.markerList()[i],self.locationListArray()[i].lat,self.locationListArray()[i].lng);
         }
+        
       },
       fail: function(xhr, status, error) {
         console.log("An AJAX error occured: " + status + "\nError: " + error +
@@ -272,8 +268,6 @@ function MapViewModel() {
     };
     $.ajax(settings);
   };
-
-
 
 }
 

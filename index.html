@@ -32,9 +32,10 @@
 
   <ul data-bind="foreach: searchFilter()">
     <li data-bind="click: $root.animateMarkers">
-      <div data-bind="click:showTypeLink,visible:nameVisible">
+      <div data-bind="click:showReviewData,visible:dataVisible">
       <div class="displayText">
-        <span data-bind="text: name, click: showTypeLink, visible: nameVisible"></span> <span data-bind="text: rating, click: showNameLink, visible: typeVisible"></span><br>
+        <span data-bind="text: name"></span><br>
+        <span data-bind="text: rating"></span>
         <img data-bind="attr: {src: rating_img}"><br>
         <span class="addr" data-bind="text: addr1"></span><br>
         <span class="addr" data-bind="text: addr2"></span>
@@ -42,8 +43,8 @@
       <img class="imgUrl" data-bind="attr: {src: img_url}">
       </div>
 
-      <div class="review" data-bind="visible:typeVisible">
-        <span data-bind="text: snippet"></span> <a data-bind="attr: { href: review_url }" target="_blank">Yelp Review</a> <span class="show-results" data-bind="click:showNameLink">Back to results</span>
+      <div class="review" data-bind="visible:reviewVisible">
+        <span data-bind="text: snippet"></span> <a data-bind="attr: { href: review_url }" target="_blank">Yelp Review</a> <span class="show-results" data-bind="click:showLocationData">Back to results</span>
       </div>
     </li>
   </ul>
