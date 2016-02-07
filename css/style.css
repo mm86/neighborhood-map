@@ -4,7 +4,8 @@ html,body {
   margin: 0;
   padding: 0;
 }
-
+/* Map, Search and Filter Boxes
+-------------------------------------------------- */
 #map {
   min-height: 100%;
   min-width: 100%;
@@ -33,7 +34,8 @@ html,body {
   font-family: 'Roboto','sans-serif';
   line-height: 30px;
 }
-
+/* List View
+-------------------------------------------------- */
 ul {
   list-style-type: none;
   background: #fff;
@@ -53,6 +55,8 @@ li {
   border-bottom: 1px solid #D3D3D3;
 }
 
+/* List View Data
+-------------------------------------------------- */
 .displayText {
   float: left;
   width: 70%;
@@ -69,6 +73,8 @@ li {
   cursor: pointer;
 }
 
+/* List View Custom ScrollBar
+-------------------------------------------------- */
 ::-webkit-scrollbar {
   width: 8px;
 }
