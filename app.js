@@ -134,10 +134,10 @@ function MapViewModel() {
         self.weatherIcon = results.weather[0].icon;
 
         google.maps.event.addListener(data, 'click', function() {
-        /*self.markerList()[i].setAnimation(google.maps.Animation.BOUNCE);
+        data.setAnimation(google.maps.Animation.BOUNCE);
         setTimeout(function() {
-          self.markerList()[i].setAnimation(null);
-        }, 1400);*/
+          data.setAnimation(null);
+        }, 1400);
         self.infocontent = '<img src="http://openweathermap.org/img/w/' + self.weatherIcon +
           '.png">' + '<p>' + data.title + '</p>';
         self.infowindow.setContent(self.infocontent);
