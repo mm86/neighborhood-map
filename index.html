@@ -47,10 +47,10 @@
       </div>
       <img class="imgUrl" data-bind="attr: {src: img_url}">
       </div>
-      <div data-bind="visible:typeVisible">
-        <span data-bind="text: snippet"></span><br>
-        <a data-bind="attr: { href: review_url }">Yelp Review</a>
-        <span data-bind="click:showNameLink">Back to results</span>
+      <div class="review" data-bind="visible:typeVisible">
+        <span data-bind="text: snippet"></span>
+        <a target="_blank" data-bind="attr: { href: review_url }">Yelp Review</a>
+        <span class="show-results" data-bind="click:showNameLink">Back to results</span>
       </div>
     </li>
   </ul>
