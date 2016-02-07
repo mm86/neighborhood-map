@@ -30,7 +30,7 @@
     </div>
   </form>
 
-  <ul data-bind="foreach: searchFilter()" id="places">
+  <ul data-bind="foreach: searchFilter()">
     <li data-bind="click: $root.animateMarkers">
       <div data-bind="click:showTypeLink,visible:nameVisible">
       <div class="displayText">
