@@ -33,7 +33,7 @@ function initMap() {
    *
    * @constructor Location
    * @Description Represents the model (of the MVVM pattern) for this application
-   * @param {string} data - Represents data from Yelp API.
+   * @param {object} data - Represents data from Yelp API.
    */
 
 function Location(data) {
@@ -50,14 +50,13 @@ function Location(data) {
   self.category = data.categories[0][0];
   self.snippet = data.snippet_text;
   self.review_url = data.url;
+  //methods and properties associated with visible binding
   self.reviewVisible = ko.observable(false);
   self.dataVisible = ko.observable(true);
-
   self.showReviewData = function() {
     self.reviewVisible(!self.reviewVisible());
     self.dataVisible(!self.dataVisible());
   };
-
   self.showLocationData = function() {
     self.reviewVisible(!self.reviewVisible());
     self.dataVisible(!self.dataVisible());
@@ -83,10 +82,9 @@ function MapViewModel() {
 
   /**
    * @function listOfLocations
-   * @description Binds with the form element. Used for retrieving information from Yelp API for each location submission
+   * @description Binds with the form element (search box). Used for retrieving information from Yelp API for each location submission
    */
   self.listOfLocations = function() {
-
 
     if (self.locationListArray().length !== 0) { //set the locationListArray to empty for every new address search.
       self.locationListArray().length = 0;
@@ -101,8 +99,8 @@ function MapViewModel() {
   /**
    * @function animateMarkers
    * @description For every list item clicked on the display, corresponding marker is bounced along with an infowindow
-   * represting information about the marker.
-   * @param {number} index : Get the index of the list item clicked
+   * represting information about the marker. This function is bound to the list item in index.html through click binding
+   * @param {object} data : Represents the location item clicked in the list view.
    */
   self.animateMarkers = function(data) {
 
@@ -115,10 +113,18 @@ function MapViewModel() {
         break;
       }
     }
+    //trigger the marker's listener method
     google.maps.event.trigger( self.markerList()[index], 'click' );
 
   };
-
+  /**
+   * @function weatherMarkerData
+   * @description Gets the weather information for each location, adds an addListener method to each marker
+   * and displays the information through the infowindow.
+   * @param {object} data : Represents the marker object for the clicked location from the list view.
+   * @param {number} lat : Represents the geographic coordinates of the location.
+   * @param {number} lng : Represents the geographic coordinates of the location.
+   */
   self.weatherMarkerData = function(data,lat,lng) {
     self.infowindow = new google.maps.InfoWindow;
     
@@ -132,7 +138,7 @@ function MapViewModel() {
       dataType: 'jsonp',
       success: function(results) {
         self.weatherIcon = results.weather[0].icon;
-
+        //display the name and weather info of the location through the infowindow
         google.maps.event.addListener(data, 'click', function() {
         data.setAnimation(google.maps.Animation.BOUNCE);
         setTimeout(function() {
@@ -156,7 +162,8 @@ function MapViewModel() {
   
   /**
    * @function searchFilter
-   * @description Dynamic live search filter method. searchFilter is a computed observable that keeps the view and viewmodel in sync during the search process
+   * @description Dynamic live search filter method. searchFilter is a computed observable that keeps the 
+   * view and viewmodel in sync during the search process.
    */
   self.searchFilter = ko.computed(function() {
     var filter = self.query().toLowerCase();
@@ -253,8 +260,9 @@ function MapViewModel() {
             icon: image,
             title: self.locationListArray()[i].name
           });
-          //save the marker objects in an array
+          //save the marker objects in an array for further use (search filter)
           self.markerList.push(marker);
+          //pass the marker object and location coordinates to weatherMarkerData function 
           self.weatherMarkerData(self.markerList()[i],self.locationListArray()[i].lat,self.locationListArray()[i].lng);
         }
         
