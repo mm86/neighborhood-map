@@ -67,8 +67,20 @@ li {
   float:left;
   width:70%;
   padding-left:20px;
+cursor:pointer;
+
 }    
 
+.review{
+  padding: 10px;
+
+}
+
+.show-results{
+
+  color:blue;
+  cursor:pointer;
+}
 ::-webkit-scrollbar {
   width: 8px;
 }
