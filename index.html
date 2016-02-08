@@ -19,7 +19,7 @@
   <form class="input-group" data-bind="submit: listOfLocations" id="search" name="search">
     <input placeholder="City Name/Zip Code..." aria-label="..." class="form-control" data-bind="value: address" id="address" type="text">
     <div class="input-group-btn">
-      <button class="btn btn-default" type="button"><span class="glyphicon glyphicon-search"></span></button>
+      <button data-bind="click: listOfLocations" class="btn btn-default list" type="button"><span class="glyphicon glyphicon-search"></span></button>
     </div>
   </form>
 
@@ -28,7 +28,7 @@
   <form class="input-group" id="filter" name="filter">
     <input aria-label="..." class="form-control" data-bind="value: query, valueUpdate: 'keyup'" placeholder="Filter..." type="search">
     <div class="input-group-btn">
-      <button class="btn btn-default list" type="button"><span class="glyphicon glyphicon-list"></span></button>
+      <button class="btn btn-default" type="button"><span class="glyphicon glyphicon-list"></span></button>
     </div>
   </form>
 
@@ -69,6 +69,10 @@
   <script>
 
     $('form').submit(function() {
+      $('ul').show();
+    });
+
+    $('.list').submit(function() {
       $('ul').show();
     });
 
