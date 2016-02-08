@@ -41,7 +41,7 @@ function Location(data) {
   self.name = data.name;
   self.lat = data.location.coordinate.latitude;
   self.lng = data.location.coordinate.longitude;
-  self.phone = data.phone; //ERROR TO FIX:if value not available, display NA
+  self.phone = data.phone; 
   self.img_url = data.image_url;
   self.rating = data.rating;
   self.rating_img = data.rating_img_url_small;
@@ -53,16 +53,18 @@ function Location(data) {
   //methods and properties associated with visible binding
   self.reviewVisible = ko.observable(false);
   self.dataVisible = ko.observable(true);
-  self.showReviewData = function() {
-    self.reviewVisible(!self.reviewVisible());
-    self.dataVisible(!self.dataVisible());
-  };
-  self.showLocationData = function() {
-    self.reviewVisible(!self.reviewVisible());
-    self.dataVisible(!self.dataVisible());
-  };
 
 }
+
+Location.prototype.showReviewData = function() {
+  self.reviewVisible(!self.reviewVisible());
+  self.dataVisible(!self.dataVisible());
+};
+
+Location.prototype.showLocationData = function() {
+  self.reviewVisible(!self.reviewVisible());
+  self.dataVisible(!self.dataVisible());
+};
 
 
 /**
