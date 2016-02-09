@@ -13,10 +13,10 @@
 </head>
 
 <body>
-  <div id="map"></div>
+  <div class="map"></div>
   <!-- Search Box
   ================================================== -->
-  <form class="input-group" data-bind="submit: listOfLocations" id="search" name="search">
+  <form class="input-group" data-bind="submit: listOfLocations" class="search" name="search">
     <input placeholder="City Name/Zip Code..." aria-label="..." class="form-control" data-bind="value: address" id="address" type="text">
     <div class="input-group-btn">
       <button data-bind="click: listOfLocations" class="btn btn-default list" type="button"><span class="glyphicon glyphicon-search"></span></button>
@@ -25,7 +25,7 @@
 
   <!-- Filter Box
   ================================================== -->
-  <form class="input-group" id="filter" name="filter">
+  <form class="input-group" class="filter" name="filter">
     <input aria-label="..." class="form-control" data-bind="value: query, valueUpdate: 'keyup'" placeholder="Filter..." type="search">
     <div class="input-group-btn">
       <button class="btn btn-default" type="button"><span class="glyphicon glyphicon-text-width"></span></button>

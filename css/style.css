@@ -13,12 +13,12 @@ body {
 }
 /* Map, Search and Filter Boxes
 -------------------------------------------------- */
-#map {
+.map {
   min-height: 100%;
   min-width: 100%;
 }
 
-#search {
+.search {
   position: absolute;
   top: 0;
   width: 385px;
@@ -30,7 +30,7 @@ body {
   line-height: 30px;
 }
 
-#filter {
+.filter {
   position: absolute;
   top: 45px;
   width: 385px;
