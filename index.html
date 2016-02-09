@@ -35,8 +35,8 @@
   <!-- List View
   ================================================== -->
   <ul data-bind="foreach: searchFilter()">
-    <li data-bind="click: $root.animateMarkers">
-      <div data-bind="click:showReviewData,visible:dataVisible">
+    <li data-bind="click: $root.animateMarker">
+      <div data-bind="click: showReviewData,visible:dataVisible">
       <div class="displayText">
         <span data-bind="text: name"></span><br>
         <span data-bind="text: rating"></span>
@@ -60,7 +60,7 @@
   </script>
   <script src="js/oauth-signature.js">
   </script> 
-  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDoVUWsmpmUt7A5chuFfuRi6jtM5JCTwYg&callback=startApp&libraries=places">
+  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDoVUWsmpmUt7A5chuFfuRi6jtM5JCTwYg&callback=startApp&libraries=places" onerror="googleError()">
   </script> 
   <script src="http://ajax.aspnetcdn.com/ajax/knockout/knockout-3.3.0.js">
   </script> 

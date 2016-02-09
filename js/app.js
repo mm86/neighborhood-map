@@ -98,10 +98,9 @@ function Location(data) {
     
       });
       },
-      fail: function(xhr, status, error) {
-        console.log("An AJAX error occured: " + status + "\nError: " + error +
-          "\nError detail: " + xhr.responseText);
-      }
+      .fail(function() {
+            alert("Data could not be retrieved from Weather API")
+      });
     };
     $.ajax(settings);
     };
@@ -131,7 +130,6 @@ function MapViewModel() {
   self.address = ko.observable("sydney, NSW");
   self.query = ko.observable('');
   self.count = 0;
-  self.infoWindowList = [];
   self.geocoder = new google.maps.Geocoder();
   self.locationListArray = ko.observableArray();
   self.markerList = ko.observableArray();
@@ -224,6 +222,7 @@ function MapViewModel() {
    * view and viewmodel in sync during the search process.
    */
   self.searchFilter = ko.computed(function() {
+    
     var filter = self.query().toLowerCase();
     if (!filter) {
       self.locationListArray().forEach(function(mk) {
@@ -304,10 +303,9 @@ function MapViewModel() {
         }
         
       },
-      fail: function(xhr, status, error) {
-        console.log("An AJAX error occured: " + status + "\nError: " + error +
-          "\nError detail: " + xhr.responseText);
-      }
+     .fail(function() {
+            alert("Data could not be retrieved from Yelp API")
+        });
     };
     $.ajax(settings);
   };
@@ -322,4 +320,9 @@ function MapViewModel() {
 function startApp() {
   initMap();
   ko.applyBindings(new MapViewModel());
+}
+
+function googleError(){
+
+  alert("google API cannot be loaded now");
 }
