@@ -78,7 +78,7 @@ function Location(data) {
   var url = 'http://api.openweathermap.org/data/2.5/weather?lat=' + self.lat + '&lon=' + self.lng +
     '&appid=44db6a862fba0b067b1930da0d769e98';
 
-  var settings = {
+   $.ajax({
     url: url,
     dataType: 'jsonp',
     success: function(results) {
@@ -98,12 +98,12 @@ function Location(data) {
 
 
       });
-    },
+    }
+  })
     .fail(function() {
-      alert("Data could not be retrieved from Weather API")
+      alert("Data could not be retrieved from Weather API");
     });
-  };
-  $.ajax(settings);
+
 };
 
 
@@ -139,7 +139,7 @@ function MapViewModel() {
 
     if (self.locationListArray().length !== 0) { //set the locationListArray to empty for every new address search.
       self.locationListArray().length = 0;
-      self.markerList().length = 0;
+
     }
 
     self.getYelpData(self.address()); //call Yelp API for retrieving list of locations and their information for further display
@@ -229,7 +229,7 @@ function MapViewModel() {
     var encodedSignature = oauthSignature.generate('GET', yelp_url, parameters,
       consumer_secret, token_secret);
     parameters.oauth_signature = encodedSignature;
-    var settings = {
+    $.ajax({
       url: yelp_url,
       data: parameters,
       cache: true,
@@ -251,12 +251,12 @@ function MapViewModel() {
           self.locationListArray.push(new Location(results.businesses[i]));
         }
 
-      },
+      }
+    })
       .fail(function() {
         alert("Data could not be retrieved from Yelp API")
       });
-    };
-    $.ajax(settings);
+
   };
 
 }
