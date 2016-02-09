@@ -41,7 +41,7 @@ function Location(data) {
   self.name = data.name;
   self.lat = data.location.coordinate.latitude;
   self.lng = data.location.coordinate.longitude;
-  self.phone = data.phone; 
+  self.phone = data.phone;
   self.img_url = data.image_url;
   self.rating = data.rating;
   self.rating_img = data.rating_img_url_small;
@@ -54,58 +54,57 @@ function Location(data) {
   //properties associated with visible binding
   self.reviewVisible = ko.observable(false);
   self.dataVisible = ko.observable(true);
+  //infowindow and marker creation for each location
   infowindow = new google.maps.InfoWindow;
   var image;
-    if (self.category === 'Zoos') {
-      image = 'images/zoo.png';
-    } else if (self.category === 'Aquariums') {
-      image = 'images/fish.png';
-    } else if (self.category === 'Botanical Gardens') {
-      image = 'images/garden.png';
-    } else {
-      image = 'images/parks.png';
-    }
- 
+  if (self.category === 'Zoos') {
+    image = 'images/zoo.png';
+  } else if (self.category === 'Aquariums') {
+    image = 'images/fish.png';
+  } else if (self.category === 'Botanical Gardens') {
+    image = 'images/garden.png';
+  } else {
+    image = 'images/parks.png';
+  }
+
   //creating a marker object for each location  
   self.marker = new google.maps.Marker({
-
-    position: new google.maps.LatLng(self.lat,self.lng),
-      map: map,
-      icon: image,
-      title: this.name
+    position: new google.maps.LatLng(self.lat, self.lng),
+    map: map,
+    icon: image,
+    title: this.name
   });
-  //attaching an event listener to each marker
-   var url = 'http://api.openweathermap.org/data/2.5/weather?lat=' + self.lat + '&lon=' + self.lng +
-      '&appid=44db6a862fba0b067b1930da0d769e98';
-    
-    var settings = {
-      url: url,
-      dataType: 'jsonp',
-      success: function(results) {
-        self.weather = results.weather[0].icon;
-        google.maps.event.addListener(self.marker, 'click', function() {
-        
-    self.marker.setAnimation(google.maps.Animation.BOUNCE);
-    setTimeout(function() {
-      self.marker.setAnimation(null);
+  //get weather details from weather API
+  var url = 'http://api.openweathermap.org/data/2.5/weather?lat=' + self.lat + '&lon=' + self.lng +
+    '&appid=44db6a862fba0b067b1930da0d769e98';
+
+  var settings = {
+    url: url,
+    dataType: 'jsonp',
+    success: function(results) {
+      self.weather = results.weather[0].icon;
+      //attach event listener click to each marker
+      google.maps.event.addListener(self.marker, 'click', function() {
+
+        self.marker.setAnimation(google.maps.Animation.BOUNCE);
+        setTimeout(function() {
+          self.marker.setAnimation(null);
         }, 1400);
         self.infocontent = '<img src="http://openweathermap.org/img/w/' + self.weather +
           '.png">' + '<p>' + self.name + '</p>';
 
         infowindow.setContent(self.infocontent);
         infowindow.open(map, self.marker);
-  
-    
-      });
-      },
-      .fail(function() {
-            alert("Data could not be retrieved from Weather API")
-      });
-    };
-    $.ajax(settings);
-    };
 
 
+      });
+    },
+    .fail(function() {
+      alert("Data could not be retrieved from Weather API")
+    });
+  };
+  $.ajax(settings);
+};
 
 
 Location.prototype.showReviewData = function() {
@@ -129,11 +128,8 @@ function MapViewModel() {
   var self = this;
   self.address = ko.observable("sydney, NSW");
   self.query = ko.observable('');
-  self.count = 0;
   self.geocoder = new google.maps.Geocoder();
   self.locationListArray = ko.observableArray();
-  self.markerList = ko.observableArray();
-
 
   /**
    * @function listOfLocations
@@ -147,7 +143,7 @@ function MapViewModel() {
     }
 
     self.getYelpData(self.address()); //call Yelp API for retrieving list of locations and their information for further display
-    
+
   };
 
 
@@ -157,7 +153,7 @@ function MapViewModel() {
    * represting information about the marker. This function is bound to the list item in index.html through click binding
    * @param {object} data : Represents the location item clicked in the list view.
    */
-  
+
   self.animateMarker = function(data) {
 
     //get the index number of the list item clicked.
@@ -169,69 +165,26 @@ function MapViewModel() {
       }
     }
     //trigger the marker's listener method
-    google.maps.event.trigger( self.locationListArray()[index].marker, 'click' );
+    google.maps.event.trigger(self.locationListArray()[index].marker, 'click');
 
   };
-  /**
-   * @function weatherMarkerData
-   * @description Gets the weather information for each location, adds an addListener method to each marker
-   * and displays the information through the infowindow.
-   * @param {object} data : Represents the marker object for the clicked location from the list view.
-   * @param {number} lat : Represents the geographic coordinates of the location.
-   * @param {number} lng : Represents the geographic coordinates of the location.
-   */
-   /*
-  self.weatherMarkerData = function(data,lat,lng) {
-    self.infowindow = new google.maps.InfoWindow;
-    
-    
-    //call Weather API for weather details of each location
-    var url = 'http://api.openweathermap.org/data/2.5/weather?lat=' + lat + '&lon=' + lng +
-      '&appid=44db6a862fba0b067b1930da0d769e98';
-    
-    var settings = {
-      url: url,
-      dataType: 'jsonp',
-      success: function(results) {
-        self.weatherIcon = results.weather[0].icon;
-        //display the name and weather info of the location through the infowindow
-        google.maps.event.addListener(data, 'click', function() {
-        data.setAnimation(google.maps.Animation.BOUNCE);
-        setTimeout(function() {
-          data.setAnimation(null);
-        }, 1400);
-        self.infocontent = '<img src="http://openweathermap.org/img/w/' + self.weatherIcon +
-          '.png">' + '<p>' + data.title + '</p>';
-        self.infowindow.setContent(self.infocontent);
-        self.infowindow.open(map, data);
-  
-      });
-      },
-      fail: function(xhr, status, error) {
-        console.log("An AJAX error occured: " + status + "\nError: " + error +
-          "\nError detail: " + xhr.responseText);
-      }
-    };
-    $.ajax(settings);
-    };
-  */
-  
+
   /**
    * @function searchFilter
-   * @description Dynamic live search filter method. searchFilter is a computed observable that keeps the 
+   * @description Dynamic live search filter method. searchFilter is a computed observable that keeps the
    * view and viewmodel in sync during the search process.
    */
   self.searchFilter = ko.computed(function() {
-    
+
     var filter = self.query().toLowerCase();
     if (!filter) {
       self.locationListArray().forEach(function(mk) {
-      mk.marker.setVisible(true);
+        mk.marker.setVisible(true);
       });
       return self.locationListArray();
     } else {
       return ko.utils.arrayFilter(self.locationListArray(), function(loc) {
-         for (var i = 0; i < self.locationListArray().length; i++) {
+        for (var i = 0; i < self.locationListArray().length; i++) {
           if (self.locationListArray()[i].marker.title.toLowerCase().indexOf(filter) !== -1) {
             self.locationListArray()[i].marker.setVisible(true);
           } else {
@@ -296,16 +249,12 @@ function MapViewModel() {
         for (var i = 0; i < results.businesses.length; i++) {
           //push location details into locationListArray by creating a new instance of Location class for each location.
           self.locationListArray.push(new Location(results.businesses[i]));
-          
-    
-
-
         }
-        
+
       },
-     .fail(function() {
-            alert("Data could not be retrieved from Yelp API")
-        });
+      .fail(function() {
+        alert("Data could not be retrieved from Yelp API")
+      });
     };
     $.ajax(settings);
   };
@@ -318,11 +267,14 @@ function MapViewModel() {
  * @description callback function that is executed once google Maps asynchronous load is ready
  */
 function startApp() {
-  initMap();
-  ko.applyBindings(new MapViewModel());
-}
+    initMap();
+    ko.applyBindings(new MapViewModel());
+  }
+  /**
+   * @function googleError
+   * @description gets called when google maps is down or cannot be loaded at the moment
+   */
 
-function googleError(){
-
+function googleError() {
   alert("google API cannot be loaded now");
 }
