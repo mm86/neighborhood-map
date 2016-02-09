@@ -6,6 +6,7 @@
  */
 'use strict';
 var map;
+var infowindow;
 
 /**
 * @function initMap 
@@ -23,7 +24,6 @@ function initMap() {
 
     //Resize the map for responsive design 
     google.maps.event.addDomListener(window, "resize", function() {
-      console.log("resize");
       var center = map.getCenter();
       google.maps.event.trigger(map, "resize");
       map.setCenter(center);
@@ -50,18 +50,73 @@ function Location(data) {
   self.category = data.categories[0][0];
   self.snippet = data.snippet_text;
   self.review_url = data.url;
-  //methods and properties associated with visible binding
+  self.weather = ko.observable();
+  //properties associated with visible binding
   self.reviewVisible = ko.observable(false);
   self.dataVisible = ko.observable(true);
+  infowindow = new google.maps.InfoWindow;
+  var image;
+    if (self.category === 'Zoos') {
+      image = 'images/zoo.png';
+    } else if (self.category === 'Aquariums') {
+      image = 'images/fish.png';
+    } else if (self.category === 'Botanical Gardens') {
+      image = 'images/garden.png';
+    } else {
+      image = 'images/parks.png';
+    }
+ 
+  //creating a marker object for each location  
+  self.marker = new google.maps.Marker({
 
-}
+    position: new google.maps.LatLng(self.lat,self.lng),
+      map: map,
+      icon: image,
+      title: this.name
+  });
+  //attaching an event listener to each marker
+   var url = 'http://api.openweathermap.org/data/2.5/weather?lat=' + self.lat + '&lon=' + self.lng +
+      '&appid=44db6a862fba0b067b1930da0d769e98';
+    
+    var settings = {
+      url: url,
+      dataType: 'jsonp',
+      success: function(results) {
+        self.weather = results.weather[0].icon;
+        google.maps.event.addListener(self.marker, 'click', function() {
+        
+    self.marker.setAnimation(google.maps.Animation.BOUNCE);
+    setTimeout(function() {
+      self.marker.setAnimation(null);
+        }, 1400);
+        self.infocontent = '<img src="http://openweathermap.org/img/w/' + self.weather +
+          '.png">' + '<p>' + self.name + '</p>';
+
+        infowindow.setContent(self.infocontent);
+        infowindow.open(map, self.marker);
+  
+    
+      });
+      },
+      fail: function(xhr, status, error) {
+        console.log("An AJAX error occured: " + status + "\nError: " + error +
+          "\nError detail: " + xhr.responseText);
+      }
+    };
+    $.ajax(settings);
+    };
+
+
+
 
 Location.prototype.showReviewData = function() {
+  var self = this;
   self.reviewVisible(!self.reviewVisible());
   self.dataVisible(!self.dataVisible());
 };
 
 Location.prototype.showLocationData = function() {
+  var self = this;
   self.reviewVisible(!self.reviewVisible());
   self.dataVisible(!self.dataVisible());
 };
@@ -104,11 +159,11 @@ function MapViewModel() {
    * represting information about the marker. This function is bound to the list item in index.html through click binding
    * @param {object} data : Represents the location item clicked in the list view.
    */
-  self.animateMarkers = function(data) {
+  
+  self.animateMarker = function(data) {
 
     //get the index number of the list item clicked.
     var index;
-
     for (var i = 0, len = self.locationListArray().length; i < len; i++) {
       if (self.locationListArray()[i].name === data.name) {
         index = i;
@@ -116,7 +171,7 @@ function MapViewModel() {
       }
     }
     //trigger the marker's listener method
-    google.maps.event.trigger( self.markerList()[index], 'click' );
+    google.maps.event.trigger( self.locationListArray()[index].marker, 'click' );
 
   };
   /**
@@ -127,6 +182,7 @@ function MapViewModel() {
    * @param {number} lat : Represents the geographic coordinates of the location.
    * @param {number} lng : Represents the geographic coordinates of the location.
    */
+   /*
   self.weatherMarkerData = function(data,lat,lng) {
     self.infowindow = new google.maps.InfoWindow;
     
@@ -160,7 +216,7 @@ function MapViewModel() {
     };
     $.ajax(settings);
     };
-  
+  */
   
   /**
    * @function searchFilter
@@ -170,17 +226,17 @@ function MapViewModel() {
   self.searchFilter = ko.computed(function() {
     var filter = self.query().toLowerCase();
     if (!filter) {
-      self.markerList().forEach(function(mk) {
-      mk.setVisible(true);
+      self.locationListArray().forEach(function(mk) {
+      mk.marker.setVisible(true);
       });
       return self.locationListArray();
     } else {
       return ko.utils.arrayFilter(self.locationListArray(), function(loc) {
          for (var i = 0; i < self.locationListArray().length; i++) {
-          if (self.markerList()[i].title.toLowerCase().indexOf(filter) !== -1) {
-            self.markerList()[i].setVisible(true);
+          if (self.locationListArray()[i].marker.title.toLowerCase().indexOf(filter) !== -1) {
+            self.locationListArray()[i].marker.setVisible(true);
           } else {
-            self.markerList()[i].setVisible(false);
+            self.locationListArray()[i].marker.setVisible(false);
           }
         }
         return loc.name.toLowerCase().indexOf(self.query().toLowerCase()) >= 0;
@@ -241,31 +297,10 @@ function MapViewModel() {
         for (var i = 0; i < results.businesses.length; i++) {
           //push location details into locationListArray by creating a new instance of Location class for each location.
           self.locationListArray.push(new Location(results.businesses[i]));
+          
+    
 
-          //Display different marker icons for different categories
-          var image;
-          if (self.locationListArray()[i].category === 'Zoos') {
-            image = 'images/zoo.png';
-          } else if (self.locationListArray()[i].category === 'Aquariums') {
-            image = 'images/fish.png';
-          } else if (self.locationListArray()[i].category === 'Botanical Gardens') {
-            image = 'images/garden.png';
-          } else {
-            image = 'images/parks.png';
-          }
-          //create a marker object for each location and display the markers on the map
-          var marker;
-          marker = new google.maps.Marker({
-            position: new google.maps.LatLng(self.locationListArray()[i].lat,
-              self.locationListArray()[i].lng),
-            map: map,
-            icon: image,
-            title: self.locationListArray()[i].name
-          });
-          //save the marker objects in an array for further use (search filter)
-          self.markerList.push(marker);
-          //pass the marker object and location coordinates to weatherMarkerData function 
-          self.weatherMarkerData(self.markerList()[i],self.locationListArray()[i].lat,self.locationListArray()[i].lng);
+
         }
         
       },
