@@ -9,7 +9,7 @@ var map;
 var infowindow;
 
 /**
-* @function initMap 
+* @function initMap
   @description Displays the initial map on application load
 */
 
@@ -130,6 +130,7 @@ function MapViewModel() {
   self.query = ko.observable('');
   self.geocoder = new google.maps.Geocoder();
   self.locationListArray = ko.observableArray();
+
 
   /**
    * @function listOfLocations
@@ -254,7 +255,7 @@ function MapViewModel() {
       }
     })
       .fail(function() {
-        alert("Data could not be retrieved from Yelp API")
+        alert("Data could not be retrieved from Yelp API");
       });
 
   };
@@ -268,12 +269,15 @@ function MapViewModel() {
  */
 function startApp() {
     initMap();
-    ko.applyBindings(new MapViewModel());
+    var viewmodel = new MapViewModel();
+    ko.applyBindings(viewmodel);
+    viewmodel.listOfLocations();
+    
   }
-  /**
-   * @function googleError
-   * @description gets called when google maps is down or cannot be loaded at the moment
-   */
+/**
+ * @function googleError
+ * @description gets called when google maps is down or cannot be loaded at the moment
+ */
 
 function googleError() {
   alert("google API cannot be loaded now");
