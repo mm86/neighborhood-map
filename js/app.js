@@ -75,9 +75,11 @@ function Location(data) {
     title: this.name
   });
   //get weather details from weather API
-  var url = 'http://api.openweathermap.org/data/2.5/weather?lat=' + self.lat + '&lon=' + self.lng +
-    '&appid=44db6a862fba0b067b1930da0d769e98';
-
+  var url = 'http://api.openweathermap.org/data/2.5/weather?lat=' + self.lat + '&lon=' + self.lng +'&appid=44db6a862fba0b067b1930da0d769e98';
+  var yelpTimeout = setTimeout(function(){
+    alert("failed to get yelp resources");
+  }, 8000);
+  
    $.ajax({
     url: url,
     dataType: 'jsonp',
@@ -90,14 +92,14 @@ function Location(data) {
         setTimeout(function() {
           self.marker.setAnimation(null);
         }, 1400);
-        self.infocontent = '<img src="http://openweathermap.org/img/w/' + self.weather +
-          '.png">' + '<p>' + self.name + '</p>';
+        self.infocontent = '<img src="http://openweathermap.org/img/w/' + self.weather +'.png">' + '<p>' + self.name + '</p>';
 
         infowindow.setContent(self.infocontent);
         infowindow.open(map, self.marker);
 
 
       });
+      clearTimeout(yelpTimeout);
     }
   })
     .fail(function() {
@@ -130,7 +132,10 @@ function MapViewModel() {
   self.query = ko.observable('');
   self.geocoder = new google.maps.Geocoder();
   self.locationListArray = ko.observableArray();
-
+  self.toggleList = ko.observable(true);
+  self.showHideList = function() {
+    self.toggleList(!self.toggleList());  
+  };
 
   /**
    * @function listOfLocations
