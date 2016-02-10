@@ -13,7 +13,7 @@ body {
 }
 /* Map, Search and Filter Boxes
 -------------------------------------------------- */
-.map {
+#map {
   min-height: 100%;
   min-width: 100%;
 }
@@ -54,7 +54,7 @@ ul {
   position: fixed;
   top: 50px;
   left: 0;
-  display: none;
+
 }
 
 li {
@@ -115,7 +115,7 @@ li {
     width: 100%;
   }
 
-  #search,#filter {
+  .search,.filter {
     width: 100%;
   }
 }

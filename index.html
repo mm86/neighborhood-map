@@ -13,11 +13,11 @@
 </head>
 
 <body>
-  <div class="map"></div>
+  <div id="map"></div>
   <!-- Search Box
   ================================================== -->
-  <form class="input-group" data-bind="submit: listOfLocations" class="search" name="search">
-    <input placeholder="City Name/Zip Code..." aria-label="..." class="form-control" data-bind="value: address" id="address" type="text">
+  <form class="search input-group" data-bind="submit: listOfLocations" name="search">
+    <input placeholder="City Name/Zip Code..." aria-label="..." class="form-control" data-bind="value: address" type="text">
     <div class="input-group-btn">
       <button data-bind="click: listOfLocations" class="btn btn-default list" type="button"><span class="glyphicon glyphicon-search"></span></button>
     </div>
@@ -25,16 +25,16 @@
 
   <!-- Filter Box
   ================================================== -->
-  <form class="input-group" class="filter" name="filter">
+  <form class="filter input-group" name="filter">
     <input aria-label="..." class="form-control" data-bind="value: query, valueUpdate: 'keyup'" placeholder="Filter..." type="search">
     <div class="input-group-btn">
-      <button class="btn btn-default" type="button"><span class="glyphicon glyphicon-text-width"></span></button>
+      <button data-bind="click: showHideList" class="btn btn-default" type="button"><span class="glyphicon glyphicon-text-width"></span></button>
     </div>
   </form>
 
   <!-- List View
   ================================================== -->
-  <ul data-bind="foreach: searchFilter()">
+  <ul data-bind="foreach: searchFilter(),visible:toggleList">
     <li data-bind="click: $root.animateMarker">
       <div data-bind="click: showReviewData,visible:dataVisible">
       <div class="displayText">
@@ -65,22 +65,7 @@
   <script src="js/app.js">
   </script> 
   <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDoVUWsmpmUt7A5chuFfuRi6jtM5JCTwYg&callback=startApp&libraries=places" onerror="googleError()">
-  </script> 
-
-  <script>
-
-    $('form').submit(function() {
-      $('ul').show();
-    });
-
-    $('.list').submit(function() {
-      $('ul').show();
-    });
-
-    $(".list").click(function(){
-      $("ul").toggle();
-     });
-
   </script>
+
 </body>
 </html>
