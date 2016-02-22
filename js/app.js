@@ -77,7 +77,7 @@ function Location(data) {
   //get weather details from weather API
   var url = 'http://api.openweathermap.org/data/2.5/weather?lat=' + self.lat + '&lon=' + self.lng +'&appid=44db6a862fba0b067b1930da0d769e98';
   var yelpTimeout = setTimeout(function(){
-    alert("failed to get yelp resources");
+    console.log("failed to get yelp resources");
   }, 8000);
   
    $.ajax({
@@ -103,7 +103,7 @@ function Location(data) {
     }
   })
     .fail(function() {
-      alert("Data could not be retrieved from Weather API");
+      console.log("Data could not be retrieved from Weather API");
     });
 
 };
@@ -260,7 +260,7 @@ function MapViewModel() {
       }
     })
       .fail(function() {
-        alert("Data could not be retrieved from Yelp API");
+        console.log("Data could not be retrieved from Yelp API");
       });
 
   };
