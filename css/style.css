@@ -1,0 +1,128 @@
+html {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+/* Map, Search and Filter Boxes
+-------------------------------------------------- */
+#map {
+  min-height: 100%;
+  min-width: 100%;
+}
+
+.search {
+  position: absolute;
+  top: 0;
+  width: 385px;
+  z-index: 5;
+  background-color: #4285F4;
+  padding: 7px;
+  text-align: center;
+  font-family: 'Roboto','sans-serif';
+  line-height: 30px;
+}
+
+.filter {
+  position: absolute;
+  top: 45px;
+  width: 385px;
+  z-index: 5;
+  background-color: #4285F4;
+  padding: 7px;
+  text-align: center;
+  font-family: 'Roboto','sans-serif';
+  line-height: 30px;
+}
+/* List View
+-------------------------------------------------- */
+ul {
+  list-style-type: none;
+  background: #fff;
+  padding: 60px 0 20px;
+  margin: 0;
+  height: calc(100% - 30px);
+  width: 385px;
+  overflow-y: auto;
+  position: fixed;
+  top: 50px;
+  left: 0;
+
+}
+
+li {
+  padding: 10px;
+  border-bottom: 1px solid #D3D3D3;
+}
+
+/* List View Data
+-------------------------------------------------- */
+.displayText {
+  float: left;
+  width: 70%;
+  padding-left: 20px;
+  cursor: pointer;
+}
+
+.review {
+  padding: 10px;
+}
+
+.show-results {
+  color: blue;
+  cursor: pointer;
+}
+
+/* List View Custom ScrollBar
+-------------------------------------------------- */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-button {
+  width: 8px;
+  height: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: #eee;
+  border: thin solid lightgray;
+  box-shadow: 0 0 3px #dfdfdf inset;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #999;
+  border: thin solid gray;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #7d7d7d;
+}
+
+/* Media Queries
+-------------------------------------------------- */
+@media (max-width: 768px) {
+  ul {
+    width: 100%;
+  }
+
+  .search,.filter {
+    width: 100%;
+  }
+}
+
+@media (max-width: 370px) {
+  .displayText {
+    float: left;
+    width: 60%;
+  }
+}

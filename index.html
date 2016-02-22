@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>OutDoors - Knockout Neighborhood Map</title>
+  <meta content="initial-scale=1.0, user-scalable=no" name="viewport">
+  <meta charset="utf-8">
+  <!-- CSS Links
+  ================================================== -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.3/normalize.css" rel="stylesheet"><!-- Latest compiled and minified CSS -->
+  <link crossorigin="anonymous" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" rel=
+  "stylesheet">
+  <link href="css/style.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+  <div id="map"></div>
+  <!-- Search Box
+  ================================================== -->
+  <form class="input-group search" data-bind="submit: listOfLocations" name="search">
+    <input placeholder="City Name/Zip Code..." aria-label="..." class="form-control" data-bind="value: address" type="text">
+    <div class="input-group-btn">
+      <button data-bind="click: listOfLocations" class="btn btn-default list" type="button"><span class="glyphicon glyphicon-search"></span></button>
+    </div>
+  </form>
+
+  <!-- Filter Box
+  ================================================== -->
+  <form class="input-group filter" name="filter">
+    <input aria-label="..." class="form-control" data-bind="value: query, valueUpdate: 'keyup'" placeholder="Filter..." type="search">
+    <div class="input-group-btn">
+      <button data-bind="click: showHideList" class="btn btn-default" type="button"><span class="glyphicon glyphicon-text-width"></span></button>
+    </div>
+  </form>
+
+  <!-- List View
+  ================================================== -->
+  <ul data-bind="foreach: searchFilter(),visible:toggleList">
+    <li data-bind="click: $root.animateMarker">
+      <div data-bind="click: showReviewData,visible:dataVisible">
+      <div class="displayText">
+        <span data-bind="text: name"></span><br>
+        <span data-bind="text: rating"></span>
+        <img data-bind="attr: {src: rating_img}"><br>
+        <span class="addr" data-bind="text: addr1"></span><br>
+        <span class="addr" data-bind="text: addr2"></span>
+      </div>
+      <img class="imgUrl" data-bind="attr: {src: img_url}">
+      </div>
+      <div class="review" data-bind="visible:reviewVisible">
+        <span data-bind="text: snippet"></span> <a data-bind="attr: { href: review_url }" target="_blank">Yelp Review</a> <span class="show-results" data-bind="click:showLocationData">Back to results</span>
+      </div>
+    </li>
+  </ul>
+
+  <!-- JS Scripts
+  ================================================== -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js">
+  </script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js">
+  </script>
+  <script src="js/oauth-signature.js">
+  </script> 
+  <script src="http://ajax.aspnetcdn.com/ajax/knockout/knockout-3.3.0.js">
+  </script> 
+  <script src="js/app.js">
+  </script> 
+  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDoVUWsmpmUt7A5chuFfuRi6jtM5JCTwYg&callback=startApp&libraries=places" onerror="googleError()">
+  </script>
+
+</body>
+</html>
