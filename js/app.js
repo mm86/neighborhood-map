@@ -1,3 +1,4 @@
+
 /**
  * Outdoors - An interactive map that displays all outdoors related activities and places to visit near a given location(address, zipcode).
    Map is built in accordance with Knockout's MVVM pattern.
@@ -287,4 +288,5 @@ function startApp() {
 function googleError() {
   alert("google API cannot be loaded now");
 }
+
 
