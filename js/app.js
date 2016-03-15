@@ -75,11 +75,11 @@ function Location(data) {
     title: this.name
   });
   //get weather details from weather API
-  var url = 'http://api.openweathermap.org/data/2.5/weather?lat=' + self.lat + '&lon=' + self.lng +'&appid=44db6a862fba0b067b1930da0d769e98';
+  var url = 'http://api.openweathermap.org/data/2.5/weather?lat=' + self.lat + '&lon=' + self.lng +'&appid=30645bead81bd8838e95049b6fc75374';
   var yelpTimeout = setTimeout(function(){
     console.log("failed to get yelp resources");
   }, 8000);
-  
+
    $.ajax({
     url: url,
     dataType: 'jsonp',
