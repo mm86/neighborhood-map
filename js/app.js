@@ -22,7 +22,7 @@ function initMap() {
       }
     });
 
-    //Resize the map for responsive design 
+    //Resize the map for responsive design
     google.maps.event.addDomListener(window, "resize", function() {
       var center = map.getCenter();
       google.maps.event.trigger(map, "resize");
@@ -67,7 +67,7 @@ function Location(data) {
     image = 'images/parks.png';
   }
 
-  //creating a marker object for each location  
+  //creating a marker object for each location
   self.marker = new google.maps.Marker({
     position: new google.maps.LatLng(self.lat, self.lng),
     map: map,
@@ -134,7 +134,7 @@ function MapViewModel() {
   self.locationListArray = ko.observableArray();
   self.toggleList = ko.observable(true);
   self.showHideList = function() {
-    self.toggleList(!self.toggleList());  
+    self.toggleList(!self.toggleList());
   };
 
   /**
@@ -277,7 +277,7 @@ function startApp() {
     var viewmodel = new MapViewModel();
     ko.applyBindings(viewmodel);
     viewmodel.listOfLocations();
-    
+
   }
 /**
  * @function googleError
@@ -287,3 +287,4 @@ function startApp() {
 function googleError() {
   alert("google API cannot be loaded now");
 }
+
